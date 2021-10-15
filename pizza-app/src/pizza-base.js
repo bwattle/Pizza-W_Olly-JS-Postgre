@@ -3,14 +3,14 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { ingredients } from "./ingredient-selector.js"
+import { allIngredients } from "./ingredient-selector.js"
 
-const ings = ingredients;
+const ings = allIngredients;
 const presets = {
     "None": [],
-    "Cheese": [ings.cheese],
-    "Meatlovers": [ings.cheese, ings.beef, ings.ham, ings.pep, ings.onion],
-    "Hawaiian": [ings.cheese, ings.tomato, ings.pineapple, ings.ham],
+    "Cheese": ["cheese"],
+    "Meatlovers": ["cheese", "beef", "ham", "pep", "onion"],
+    "Hawaiian": ["cheese", "tomato", "pineapple", "ham"],
 }
 
 function BaseSelect(props) {
