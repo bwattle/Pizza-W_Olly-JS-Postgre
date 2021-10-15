@@ -1,13 +1,14 @@
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import IconButton from '@mui/material/IconButton';
+import { basePrice, ingredientPrices } from "./price";
 // https://mui.com/components/material-icons/
 
 // https://mui.com/components/buttons/
 const SelectedIngredient = (props)=>{
     return (
         <div className="ingredient-item">
-            <p>{allIngredients[props.name]}</p>
+            <span className="noselect">{allIngredients[props.name]}  ${ingredientPrices[props.name]}</span>
             <IconButton onClick={()=>{props.onClick(props.name)}} aria-label="delete" sx={{
                 color: 'red',
             }}>
@@ -18,8 +19,8 @@ const SelectedIngredient = (props)=>{
 }
 const NonSelectedIngredient = (props)=>{
     return (
-        <div className="ingredient-item">
-            <p>{allIngredients[props.name]}</p>
+        <div className="ingredient-item"  onClick={()=>{props.onClick(props.name)}}>
+            <span className="noselect">{allIngredients[props.name]}  ${ingredientPrices[props.name]}</span>
             <IconButton onClick={()=>{props.onClick(props.name)}} aria-label="delete" sx={{
                 color: 'green',
             }}>
@@ -50,6 +51,7 @@ const IngredientsSelector = (props)=>{
 
     return (
         <div id="ingredients-selector">
+            Base price ${basePrice}
             {selected.map((ing, idx)=>{
                 return <SelectedIngredient onClick={handleRemoveIng} key={idx} name={ing} />
             })}
@@ -77,6 +79,7 @@ const allIngredients = {
     "pineapple": "Pineapple",
     "prawn": "Prawns",
 }
+
 
 
 export { allIngredients };

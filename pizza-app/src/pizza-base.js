@@ -24,7 +24,7 @@ function BaseSelect(props) {
     // https://mui.com/components/selects/#props
     return (
     <FormControl>
-        <InputLabel id="demo-simple-select-label">Age</InputLabel>
+        <InputLabel id="demo-simple-select-label">Preset</InputLabel>
         <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"

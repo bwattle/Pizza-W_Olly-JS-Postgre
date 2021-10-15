@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Button from '@mui/material/Button';
+import { Price } from "./price.js";
 import BaseSelect from './pizza-base';
 import IngredientsSelector from './ingredient-selector';
 
@@ -15,6 +16,7 @@ const App = ()=>{
             <Button variant="contained">Hello World</Button>
             <BaseSelect setIngs={handleSetPreset} />
             <IngredientsSelector ings={curIngredients} setIngs={handleSetPreset} />
+            <Price ings={curIngredients} />
         </div>
     )
 }
