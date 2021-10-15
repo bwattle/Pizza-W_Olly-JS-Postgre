@@ -1,40 +1,63 @@
-import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import IconButton from '@mui/material/IconButton';
+// https://mui.com/components/material-icons/
 
+// https://mui.com/components/buttons/
 const SelectedIngredient = (props)=>{
     return (
-        <div className="ingrident-item">
+        <div className="ingredient-item">
             <p>{allIngredients[props.name]}</p>
-            <IconButton aria-label="delete">
-                <DeleteIcon />
+            <IconButton onClick={()=>{props.onClick(props.name)}} aria-label="delete" sx={{
+                color: 'red',
+            }}>
+                <RemoveIcon />
             </IconButton>
         </div>
     )
 }
 const NonSelectedIngredient = (props)=>{
     return (
-        <div className="ingrident-item">
+        <div className="ingredient-item">
             <p>{allIngredients[props.name]}</p>
-            <IconButton aria-label="delete">
-                <DeleteIcon />
+            <IconButton onClick={()=>{props.onClick(props.name)}} aria-label="delete" sx={{
+                color: 'green',
+            }}>
+                <AddIcon />
             </IconButton>
         </div>
     )
 }
 
 const IngredientsSelector = (props)=>{
+
+    // on click handlers
+    const handleRemoveIng = (ing)=>{
+        // filter to remove ingredient
+        const newIngs = props.ings.filter(item => item !== ing)
+        props.setIngs(newIngs)
+    }
+    const handleAddIng = (ing)=>{
+        // concat new ing to end
+        const newIngs = props.ings.concat([ing])
+        props.setIngs(newIngs)
+    }
+
+    // list of all selected ingredients
     const selected = props.ings;
+    // all non selected ingredients
     const notSelected = Object.keys(allIngredients).filter(i=>!props.ings.includes(i))
-    console.log(selected, notSelected)
+
     return (
         <div id="ingredients-selector">
             {selected.map((ing, idx)=>{
-                console.log("mapped", ing);
-                return <SelectedIngredient key={idx} name={ing} />
+                return <SelectedIngredient onClick={handleRemoveIng} key={idx} name={ing} />
             })}
+
             <hr></hr>
+
             {notSelected.map((ing, idx)=>{
-                return <NonSelectedIngredient key={idx} name={ing} />
+                return <NonSelectedIngredient onClick={handleAddIng} key={idx} name={ing} />
             })}
         </div>
     )

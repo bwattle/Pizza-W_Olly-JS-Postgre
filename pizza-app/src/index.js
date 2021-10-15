@@ -14,7 +14,7 @@ const App = ()=>{
         <div id="app-main">
             <Button variant="contained">Hello World</Button>
             <BaseSelect setIngs={handleSetPreset} />
-            <IngredientsSelector ings={curIngredients}/>
+            <IngredientsSelector ings={curIngredients} setIngs={handleSetPreset} />
         </div>
     )
 }

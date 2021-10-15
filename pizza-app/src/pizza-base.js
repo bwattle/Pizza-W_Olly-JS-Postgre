@@ -14,14 +14,15 @@ const presets = {
 }
 
 function BaseSelect(props) {
-  const [lastPreset, setLastPreset] = React.useState(presets.None);
+    const [lastPreset, setLastPreset] = React.useState(presets.None);
 
-  const handleChange = (event) => {
-      setLastPreset(event.target.value);
-      props.setIngs(presets[event.target.value]);
-  };
+    const handleChange = (event) => {
+        setLastPreset(event.target.value);
+        props.setIngs(presets[event.target.value]);
+    };
 
-  return (
+    // https://mui.com/components/selects/#props
+    return (
     <FormControl>
         <InputLabel id="demo-simple-select-label">Age</InputLabel>
         <Select
@@ -29,6 +30,7 @@ function BaseSelect(props) {
             id="demo-simple-select"
             value={lastPreset}
             label="Preset"
+            autoWidth
             onChange={handleChange}
         >
             {Object.keys(presets).map((key, idx)=>{
@@ -38,7 +40,7 @@ function BaseSelect(props) {
             })}
         </Select>
     </FormControl>
-  );
+    );
 }
 
 export default BaseSelect;
