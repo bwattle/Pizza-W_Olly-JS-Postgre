@@ -7,4 +7,5 @@ Uses Material UI library for nice looking react components (e.g. button, text in
 Uses parcel to bundle my javascript and library javascript together into a single file
 
 run `npm ci` in pizza-app/ to install dependancies
-after that run `parcel src/index.html` in pizza-app/ to run development server locally
+
+after that run `npx parcel src/index.html` in pizza-app/ to run development server locally

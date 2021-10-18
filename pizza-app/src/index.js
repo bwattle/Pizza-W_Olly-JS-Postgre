@@ -1,21 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Button from '@mui/material/Button';
 import { Price } from "./price.js";
 import BaseSelect from './pizza-base';
 import IngredientsSelector from './ingredient-selector';
 
 const App = ()=>{
-    [ curIngredients, setIngredients ] = React.useState([]);
-    const handleSetPreset = (to)=>{
-        setIngredients(to);
-        console.log(`set ingredents to ${to}`)
-    }
+    const [ curIngredients, setIngredients ] = React.useState([]);
     return (
         <div id="app-main">
-            <Button variant="contained">Hello World</Button>
-            <BaseSelect setIngs={handleSetPreset} />
-            <IngredientsSelector ings={curIngredients} setIngs={handleSetPreset} />
+            <BaseSelect setIngs={setIngredients} />
+            <IngredientsSelector ings={curIngredients} setIngs={setIngredients} />
             <Price ings={curIngredients} />
         </div>
     )
