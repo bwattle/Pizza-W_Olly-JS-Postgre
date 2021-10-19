@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Price } from "./price.js";
-import BaseSelect from './pizza-base';
+import BaseSelect from './pizza-preset';
 import IngredientsSelector from './ingredient-selector';
 
 const App = ()=>{

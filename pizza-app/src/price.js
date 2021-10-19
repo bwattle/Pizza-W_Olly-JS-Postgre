@@ -1,4 +1,4 @@
-import Button from '@mui/material/Button';
+import Payment from "./payment"
 
 const basePrice = 6
 const ingredientPrices = {
@@ -21,7 +21,8 @@ export function Price(props){
     return (
         <div id="price-outer">
             Total: ${total}
-            <Button id="order-button" variant="contained">Order</Button>
+            <Payment />
+            <button type="button">Order</button>
         </div>
     )
 }
