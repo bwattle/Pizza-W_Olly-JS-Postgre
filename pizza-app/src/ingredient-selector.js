@@ -6,7 +6,7 @@ const SelectedIngredient = (props)=>{
     return (
         <div className="ingredient-item" onClick={()=>{props.onClick(props.name)}}>
             <span className="noselect">{allIngredients[props.name]}  ${ingredientPrices[props.name]}</span>
-            -
+            <span className="red noselect">-</span>
         </div>
     )
 }
@@ -14,7 +14,7 @@ const NonSelectedIngredient = (props)=>{
     return (
         <div className="ingredient-item"  onClick={()=>{props.onClick(props.name)}}>
             <span className="noselect">{allIngredients[props.name]}  ${ingredientPrices[props.name]}</span>
-            +
+            <span className="green noselect">+</span>
         </div>
     )
 }
