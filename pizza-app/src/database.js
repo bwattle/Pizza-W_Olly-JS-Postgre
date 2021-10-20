@@ -1,6 +1,6 @@
 import { allIngredients } from "./ingredient-selector";
 
-// will use localstorage to store records
+// uses localstorage to store records
 class Database{
     constructor(){
         this.records = JSON.parse(localStorage.getItem("records"))
@@ -8,9 +8,21 @@ class Database{
             this.records = [];
             this._saveRecords();
         }
-        console.log(this.records);
+
+        // beacuse they are storaged in json when the get parse out they are plain objects, not class objects
+        // creates dummy OrderRecord instances and sets all attributes
+        this.newRecords = []
+        for(let record of this.records){
+            const newRecord = new OrderRecord([], 0, "", "cash", 0, -1)
+            Object.assign(newRecord, record)
+            this.newRecords.push(newRecord);
+        }
+        this.records = this.newRecords;
     }
     addRecord(record){
+        if( !(record instanceof OrderRecord)){
+            throw "Tried to add non record"
+        }
         if(this.getRecordFromUid(record.uid)){
             throw "Tried to add duplice uid"
         }
@@ -18,6 +30,9 @@ class Database{
         this._saveRecords();
     }
     setRecord(idx, record){
+        if( !(record instanceof OrderRecord)){
+            throw "Tried to set non record"
+        }
         this.records[idx] = record;
         this._saveRecords();
     }
@@ -36,8 +51,6 @@ class Database{
     }
 }
 
-// create single instance to share everywhere
-const database = new Database();
 
 class OrderRecord {
     constructor(ingredients, deliveryDate, name, payment, price, id){
@@ -45,8 +58,9 @@ class OrderRecord {
         this.deliveryDate = deliveryDate; // number as seconds since epoch
         this.name = name; // string
         this.payment = payment; // either "cash" or "card"
-        this.price = price;
-        this.id = id;
+        this.price = price; // number
+        this.id = id; // large number
+        this.filled = false;
 
         if(!this.validate()){
             throw "Invaid OrderRecord"
@@ -65,9 +79,13 @@ class OrderRecord {
             typeof this.deliveryDate == "number" &&
             (this.payment == "cash" || this.payment == "card") &&
             typeof this.price == "number" &&
-            typeof this.id == "number"
+            typeof this.id == "number" &&
+            typeof this.filled == "boolean"
         )
     }
 }
+
+// create single instance to share everywhere
+const database = new Database();
 
 export { database, OrderRecord };
