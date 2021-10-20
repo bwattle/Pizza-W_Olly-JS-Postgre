@@ -1,7 +1,0 @@
-
-
-class OrderRecord{
-    constructor(ingredients, ){
-
-    }
-}

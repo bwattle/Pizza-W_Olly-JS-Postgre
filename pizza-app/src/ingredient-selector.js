@@ -1,19 +1,16 @@
-import { basePrice, ingredientPrices } from "./price";
-// https://mui.com/components/material-icons/
 
-// https://mui.com/components/buttons/
 const SelectedIngredient = (props)=>{
     return (
-        <div className="ingredient-item" onClick={()=>{props.onClick(props.name)}}>
-            <span className="noselect">{allIngredients[props.name]}  ${ingredientPrices[props.name]}</span>
+        <div className="ingredient-item" onClick={()=>{props.onClick(props.ing)}}>
+            <span className="noselect">{allIngredients[props.ing].name}  ${allIngredients[props.ing].price}</span>
             <span className="red noselect">-</span>
         </div>
     )
 }
 const NonSelectedIngredient = (props)=>{
     return (
-        <div className="ingredient-item"  onClick={()=>{props.onClick(props.name)}}>
-            <span className="noselect">{allIngredients[props.name]}  ${ingredientPrices[props.name]}</span>
+        <div className="ingredient-item"  onClick={()=>{props.onClick(props.ing)}}>
+            <span className="noselect">{allIngredients[props.ing].name}  ${allIngredients[props.ing].price}</span>
             <span className="green noselect">+</span>
         </div>
     )
@@ -42,34 +39,35 @@ const IngredientsSelector = (props)=>{
         <div id="ingredients-selector">
             Base price ${basePrice}
             {selected.map((ing, idx)=>{
-                return <SelectedIngredient onClick={handleRemoveIng} key={idx} name={ing} />
+                return <SelectedIngredient onClick={handleRemoveIng} key={idx} ing={ing} />
             })}
 
             <hr></hr>
 
             {notSelected.map((ing, idx)=>{
-                return <NonSelectedIngredient onClick={handleAddIng} key={idx} name={ing} />
+                return <NonSelectedIngredient onClick={handleAddIng} key={idx} ing={ing} />
             })}
         </div>
     )
 }
 
+const basePrice = 6;
 // provides a mapping between interal names and display names
 const allIngredients = {
-    "cheese": "Cheese",
-    "beef": "Ground beef",
-    "ham": "Ham",
-    "pep": "Sliced Pepperoni",
-    "mushroom": "Mushrooms",
-    "tomato": "Tomato Chunks",
-    "spinich": "Spinich",
-    "bacon": "Bacon",
-    "onion": "Red Onion",
-    "pineapple": "Pineapple",
-    "prawn": "Prawns",
+    cheese:      { name: "Cheese", price: 1 },
+    beef:        { name: "Ground beef", price: 2 },
+    ham:         { name: "Ham", price: 2 },
+    pep:         { name: "Sliced Pepperoni", price: 2 },
+    mushroom:    { name: "Mushrooms", price: 1 },
+    tomato:      { name: "Tomato Chunks", price: 1 },
+    spinach:     { name: "Spinach", price: 1 },
+    bacon:       { name: "Bacon", price: 3 },
+    onion:       { name: "Red Onion", price: 1 },
+    pineapple:   { name: "Pineapple", price: 9999 },
+    prawn:       { name: "Prawns", price: 3 },
 }
 
 
 
-export { allIngredients };
+export { allIngredients, basePrice };
 export default IngredientsSelector;

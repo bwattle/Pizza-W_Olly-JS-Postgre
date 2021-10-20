@@ -21,8 +21,8 @@ function BaseSelect(props) {
     // https://mui.com/components/selects/#props
     return (
         <div>
-            <label htmlFor="cars">Select preset: </label>
-            <select value={lastPreset} onChange={handleChange} name="cars" id="cars">
+            <label htmlFor="preset">Select preset: </label>
+            <select value={lastPreset} onChange={handleChange} name="preset" id="preset-selector">
                 {Object.keys(presets).map((key, idx)=>{
                     return (
                         <option key={idx} value={key}>{key}</option>
