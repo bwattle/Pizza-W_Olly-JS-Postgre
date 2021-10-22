@@ -2,6 +2,15 @@ import React from "react";
 import { allIngredients, basePrice } from "./ingredient-selector";
 import { database, OrderRecord } from './database.js';
 
+function Validate(props){
+    return (
+        <div>
+            {props.children}
+            {props.valid?null:<span className="red">*</span>}
+        </div>
+    )
+}
+
 function OnlinePayment(props){
     return (
         <div>
@@ -34,18 +43,34 @@ export function Checkout(props){
         console.log(database.records)
     }
 
+    const validateInput = ()=>{
+        if(name.length == 0){
+            return false
+        }
+        if(!cash){
+            // if(check card details)
+            return false
+        }
+        return true
+    }
+
     return (
         <div id="price-outer">
             Total: ${total}
             <div>
-                <label htmlFor="fname">First name:</label>
-                <input type="text" id="fname" name="fname" value={name} onChange={handleNameChange}></input>
+                <Validate valid={name.length > 0}>
+                    <label htmlFor="fname">First name:</label>
+                    <input type="text" id="fname" name="fname" value={name} onChange={handleNameChange}></input>
+                </Validate>
                 <br/>
-                <label htmlFor="payType">Paying cash?</label>
-                <input type="checkbox" id="cash-checkbox" name="payType" value={cash} onChange={handleCashChange}></input>
-                {!cash?<OnlinePayment />:null}
+                <Validate valid={cash==true}>
+                    <label htmlFor="payType">Paying cash?</label>
+                    <input type="checkbox" id="cash-checkbox" name="payType" value={cash} onChange={handleCashChange}></input>
+                </Validate>
+                    {!cash?<OnlinePayment />:null}
+               
             </div>
-            <button type="button" onClick={handleCreateOrder}>Order</button>
+            <button type="button" onClick={handleCreateOrder} disabled={!validateInput()}>Order</button>
         </div>
     )
 }

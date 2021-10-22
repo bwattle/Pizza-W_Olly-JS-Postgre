@@ -35,8 +35,8 @@ function Popup(props){
 
 // component to display a list of records in a popup
 function RecordTable(props){
-    // state is only used to make component update
-    const [getter, setter] = React.useState(0)
+    // this state is only used to make component update
+    const [_, update] = React.useState(0)
     const [ showFilled, setShowFilled] = React.useState(false);
 
     const handleFilled = (record)=>{
@@ -45,7 +45,7 @@ function RecordTable(props){
         const idx = database.records.indexOf(record)
         console.log(record)
         database.setRecord(idx, newRecord);
-        setter(Math.random())
+        update(Math.random())
     }
 
     const toggleShowFilled = ()=>{setShowFilled(!showFilled)}
@@ -60,8 +60,8 @@ function RecordTable(props){
     
     return (
         <Popup close={props.close}>
-            <input type="checkbox" name="filled-checkbox" value={showFilled} onClick={toggleShowFilled}></input>
-            <label htmlFor="filled-checkbox" onClick={toggleShowFilled}>Show filled orders?</label>
+            <input type="checkbox" name="filled-checkbox" value={showFilled} onChange={toggleShowFilled}></input>
+            <label htmlFor="filled-checkbox">Show filled orders?</label>
             <br></br>
             <table id="record-inner">
                 <thead>
