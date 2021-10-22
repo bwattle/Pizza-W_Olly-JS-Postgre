@@ -14,9 +14,9 @@ function RecordEntry(props){
             <td>{ (props.record.payment == "cash").toString() }</td>
             <td>${props.record.price}</td>
             {expanded?
-            (<td onClick={toggleExpanded} className="noselect">{props.record.ingredients.toString()}</td>)
+            (<td onClick={toggleExpanded} className="noselect hoverable">{props.record.ingredients.toString()}</td>)
             :
-            (<td onClick={toggleExpanded} className="noselect">{props.record.ingredients.length}#</td>)
+            (<td onClick={toggleExpanded} className="noselect hoverable">{props.record.ingredients.length}#</td>)
             }
         </tr>
     )
@@ -38,6 +38,8 @@ function RecordTable(props){
     // this state is only used to make component update
     const [_, update] = React.useState(0)
     const [ showFilled, setShowFilled] = React.useState(false);
+    const [ sortingBy, setSortingBy ] = React.useState("deliveryDate")
+    const [ sortReverse, setSortReverse ] = React.useState(false)
 
     const handleFilled = (record)=>{
         const newRecord = record;
@@ -55,7 +57,29 @@ function RecordTable(props){
         shownRecords = database.records;
     }else{
         shownRecords = database.records.filter(r=>!r.filled);
+    }
 
+    // you can access class attributes with square bracket notation
+    const compareFunc = (a, b)=>{
+        if(sortReverse){
+            return (a[sortingBy]>b[sortingBy])?1:-1 // have to convert bool to -1 and 1
+        }else{
+            return (a[sortingBy]<b[sortingBy])?1:-1
+        }
+    }
+    shownRecords.sort(compareFunc)
+    const sortSymbol = sortReverse?"▴":"▾"
+
+    // name prop has to match OrderRecord attributes
+    const TableHeader = (props)=>{
+        const handleClick = event => {
+            if(sortingBy == props.name){
+                setSortReverse(!sortReverse)
+            }else{
+                setSortingBy(props.name)
+            }
+        }
+        return <th className="hoverable table-sortable noselect" onClick={handleClick}>{props.display} {sortingBy==props.name?sortSymbol:null}</th>
     }
     
     return (
@@ -67,13 +91,13 @@ function RecordTable(props){
                 <thead>
                     <tr>
                         <th>Fill</th>
-                        <th>Has filled</th>
+                        <TableHeader display="Has filled" name="filled" />
                         <th>Id</th>
-                        <th>DueTime</th>
+                        <TableHeader display="DueTime" name="deliveryDate" />
                         <th>Name</th>
-                        <th>Cash</th>
-                        <th>Price</th>
-                        <th>Ingredients (Click to expand)</th>
+                        <TableHeader display="Cash" name="payment" />
+                        <TableHeader display="Price" name="price" />
+                        <th>Ingredients</th>
                     </tr>
                 </thead>
                 <tbody>

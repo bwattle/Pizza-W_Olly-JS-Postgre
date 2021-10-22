@@ -122,3 +122,17 @@ table{
     max-height: 90vh;
     overflow-y: scroll;
 }
+
+.hoverable{
+    cursor: default;
+}
+.hoverable:hover{
+    cursor: pointer;
+}
+
+.table-sortable{
+    background-color: #ddd;
+}
+.table-sortable:hover{
+    background-color: #aaa;
+}
