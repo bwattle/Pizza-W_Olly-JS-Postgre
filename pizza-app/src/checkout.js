@@ -2,15 +2,7 @@ import React from "react";
 import { allIngredients, basePrice } from "./ingredient-selector";
 import { database, OrderRecord } from './database.js';
 import Delivery from "./delivery.js"
-
-function Validate(props){
-    return (
-        <div>
-            {props.children}
-            {props.valid?null:<span className="red">*</span>}
-        </div>
-    )
-}
+import Validate from "./validateWrapper";
 
 function OnlinePayment(props){
     return (
