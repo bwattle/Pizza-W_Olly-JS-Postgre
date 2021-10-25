@@ -14,9 +14,9 @@ function RecordEntry(props){
             <td>{ (props.record.payment == "cash").toString() }</td>
             <td>${props.record.price}</td>
             {expanded?
-            (<td onClick={toggleExpanded} className="noselect hoverable">{props.record.ingredients.toString()}</td>)
+            (<td onClick={toggleExpanded} className="noselect table-sortable hoverable">{props.record.ingredients.toString()}</td>)
             :
-            (<td onClick={toggleExpanded} className="noselect hoverable">{props.record.ingredients.length}#</td>)
+            (<td onClick={toggleExpanded} className="noselect table-sortable hoverable">{props.record.ingredients.length}#</td>)
             }
         </tr>
     )

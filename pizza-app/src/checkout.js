@@ -1,6 +1,7 @@
 import React from "react";
 import { allIngredients, basePrice } from "./ingredient-selector";
 import { database, OrderRecord } from './database.js';
+import Delivery from "./delivery.js"
 
 function Validate(props){
     return (
@@ -70,6 +71,7 @@ export function Checkout(props){
                     {!cash?<OnlinePayment />:null}
                
             </div>
+            <Delivery />
             <button type="button" onClick={handleCreateOrder} disabled={!validateInput()}>Order</button>
         </div>
     )
