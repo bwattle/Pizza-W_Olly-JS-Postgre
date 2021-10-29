@@ -1,0 +1,17 @@
+body{
+    background-color: aliceblue;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+body>a{
+    background-color: antiquewhite;
+    width: 200px;
+    height: 200px;
+    margin: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
