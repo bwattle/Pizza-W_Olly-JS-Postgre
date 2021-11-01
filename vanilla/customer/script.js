@@ -33,11 +33,3 @@ function setPreset(value){
 }
 
 createIngredients();
-
-
-function setAsap(value){
-    document.getElementById("datetimeSelector").hidden = value
-    document.getElementById("asapEst").hidden = !value
-}
-
-setAsap(true)
