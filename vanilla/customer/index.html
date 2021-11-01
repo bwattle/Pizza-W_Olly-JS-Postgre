@@ -12,31 +12,82 @@
         <a href="../">Back</a>
     </div>
     <div id="orderProgress">
-        <div>Add pizza</div>
+        <div>Step 1</div>
+        <div>Step 2</div>
+        <div>Step 3</div>
     </div>
     <form>
-        <label>
-            Postcode
-            <input type="text" id="testInput" class="validate onlyNums onlyFour">
-        </label>
-        <label>
-            Validated input 2
-            <input type="text" id="testInput" class="validate onlyLets">
-        </label>
-        <div id="ingredients">
-            <template id="ingredientItemTemplate">
+        <fieldset>
+            <legend>Create pizza</legend>
+            <label>
+                Select preset:
+                <select name="cars" id="cars" onchange="setPreset(event.target.value)"">
+                    <option value="plain">Plain</option>
+                    <option value="hawaiian">Hawaiian</option>
+                    <option value="meatlovers">Meatlovers</option>
+                    <option value="veg">Vegitarian</option>
+                </select>
+            </label>
+            <br><br>
+            Or select ingredients individually
+            <br><br>
+            <div id="ingredients">
+                <template id="ingredientItemTemplate">
+                    <label>
+                        [<span id="labelText">Bru</span>
+                        <input class="ingredientInput" type="checkbox" name="ingredientRadio" value="">]
+                        <br>
+                    </label>
+                </template>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Customer Info</legend>
+            <label>
+                Postcode
+                <input type="text" id="testInput" class="validate onlyNums onlyFour">
+            </label>
+            <br>
+            <label>
+                First Name:
+                <input type="text">
+            </label>
+            <label>
+                Last Name:
+                <input type="text">
+            </label>
+        </fieldset>
+        <fieldset>
+            <legend>Order Info</legend>
+            <label>
+                Number of pizzas
+                <input type="number" min=1 max=99 step=1>
+            </label>
+            <br>
+            <label>
+                Delivery time:
+                <br>
                 <label>
-                    <span id="labelText">Bru</span>
-                    <input type="radio" name="ingredientRadio" value="">
+                    ASAP
+                    <input type='checkbox' checked onchange="setAsap(event.target.checked)">
                 </label>
-            </template>
-        </div>
+                <br>
+                <div id="datetimeSelector">
+                    <input type="datetime-local">
+                </div>
+                <div id="asapEst">
+                    Est delivery time:
+                    cur time here
+                </div>
+            </label>
+        </fieldset>
+        <input type="submit"> 
     </form>
     <div id="popup">
         Popup message
     </div>
     <script src="../common/database.js"></script>
-    <script src="ingredients.js"></script>
+    <script src="script.js"></script>
     <script src="validator.js"></script>
 </body>
 </html>
