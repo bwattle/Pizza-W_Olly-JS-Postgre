@@ -16,28 +16,5 @@ function createIngredients(){
     }
 }
 
-const presets = {
-    "plain": [],
-    "hawaiian": ["cheese", "tomato", "pineapple", "ham"],
-    "meatlovers": ["cheese", "beef", "ham", "pep", "onion"],
-    "veg": ["cheese", "tomato", "pineapple", "spinach", "onion", "mushroom"],
-}
-
-function setPreset(value){
-    const matches = presets[value]
-    const inputs = document.getElementsByClassName("ingredientInput")
-    for(const input of inputs){
-        const inputName = input.id.split("-")[1] // string name for the ingredient of the current input
-        input.checked = matches.includes(inputName)
-    }
-}
 
 createIngredients();
-
-
-function setAsap(value){
-    document.getElementById("datetimeSelector").hidden = value
-    document.getElementById("asapEst").hidden = !value
-}
-
-setAsap(true)

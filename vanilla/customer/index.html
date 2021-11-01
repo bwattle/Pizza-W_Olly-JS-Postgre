@@ -19,18 +19,6 @@
     <form>
         <fieldset>
             <legend>Create pizza</legend>
-            <label>
-                Select preset:
-                <select name="cars" id="cars" onchange="setPreset(event.target.value)"">
-                    <option value="plain">Plain</option>
-                    <option value="hawaiian">Hawaiian</option>
-                    <option value="meatlovers">Meatlovers</option>
-                    <option value="veg">Vegitarian</option>
-                </select>
-            </label>
-            <br><br>
-            Or select ingredients individually
-            <br><br>
             <div id="ingredients">
                 <template id="ingredientItemTemplate">
                     <label>
@@ -48,37 +36,12 @@
                 <input type="text" id="testInput" class="validate onlyNums onlyFour">
             </label>
             <br>
-            <label>
-                First Name:
-                <input type="text">
-            </label>
-            <label>
-                Last Name:
-                <input type="text">
-            </label>
         </fieldset>
         <fieldset>
             <legend>Order Info</legend>
             <label>
                 Number of pizzas
                 <input type="number" min=1 max=99 step=1>
-            </label>
-            <br>
-            <label>
-                Delivery time:
-                <br>
-                <label>
-                    ASAP
-                    <input type='checkbox' checked onchange="setAsap(event.target.checked)">
-                </label>
-                <br>
-                <div id="datetimeSelector">
-                    <input type="datetime-local">
-                </div>
-                <div id="asapEst">
-                    Est delivery time:
-                    cur time here
-                </div>
             </label>
         </fieldset>
         <input type="submit"> 
