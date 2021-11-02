@@ -21,7 +21,7 @@
             <legend>Create pizza</legend>
             <label>
                 Select preset:
-                <select name="cars" id="cars" onchange="setPreset(event.target.value)"">
+                <select name="cars" id="cars" onchange="setPreset(event.target.value)">
                     <option value="plain">Plain</option>
                     <option value="hawaiian">Hawaiian</option>
                     <option value="meatlovers">Meatlovers</option>
@@ -64,8 +64,7 @@
                 <input type="number" min=1 max=99 step=1>
             </label>
             <br>
-            <label>
-                Delivery time:
+                Delivery:
                 <br>
                 <label>
                     ASAP
@@ -73,13 +72,17 @@
                 </label>
                 <br>
                 <div id="datetimeSelector">
-                    <input type="datetime-local">
+                    <!-- <input type="datetime-local"> -->
+                    <label>
+                        Choose your delivery date:
+                        <input id="deliveryDate" type="date" name="party" min="2021-10-25" required>
+
+                    </label>
                 </div>
                 <div id="asapEst">
                     Est delivery time:
                     cur time here
                 </div>
-            </label>
         </fieldset>
         <input type="submit"> 
     </form>
