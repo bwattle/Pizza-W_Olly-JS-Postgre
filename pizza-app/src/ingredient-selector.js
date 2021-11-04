@@ -36,17 +36,19 @@ const IngredientsSelector = (props)=>{
     const notSelected = Object.keys(allIngredients).filter(i=>!props.ings.includes(i))
 
     return (
-        <div id="ingredients-selector">
-            Base price ${basePrice}
-            {selected.map((ing, idx)=>{
-                return <SelectedIngredient onClick={handleRemoveIng} key={idx} ing={ing} />
-            })}
-
-            <hr></hr>
-
-            {notSelected.map((ing, idx)=>{
-                return <NonSelectedIngredient onClick={handleAddIng} key={idx} ing={ing} />
-            })}
+        <div>
+            <div id="ingredients-selector">
+                <div className="ingredients-yes">
+                    {selected.map((ing, idx)=>{
+                        return <SelectedIngredient onClick={handleRemoveIng} key={idx} ing={ing} />
+                    })}
+                </div>
+                <div className="ingredients-no">
+                    {notSelected.map((ing, idx)=>{
+                        return <NonSelectedIngredient onClick={handleAddIng} key={idx} ing={ing} />
+                    })}
+                </div>
+            </div>
         </div>
     )
 }

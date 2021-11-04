@@ -1,6 +1,7 @@
 import { allIngredients } from "./ingredient-selector";
 
 // uses localstorage to store records
+// TODO: change to use remote sql database
 class Database{
     constructor(){
         this.records = JSON.parse(localStorage.getItem("records"))
@@ -53,8 +54,8 @@ class Database{
 
 
 class OrderRecord {
-    constructor(ingredients, deliveryDate, name, payment, price, id){
-        this.ingredients = ingredients; // array of ingredient strings
+    constructor(items, deliveryDate, name, payment, price, id){
+        this.items = items; // array of pizzas
         this.deliveryDate = deliveryDate; // number as seconds since epoch
         this.name = name; // string
         this.payment = payment; // either "cash" or "card"
@@ -70,10 +71,8 @@ class OrderRecord {
     // make sure all the data is in the correct format
     validate(){
         return (
-            // ingredients is an array
-            Array.isArray(this.ingredients) &&
-            // every item in ingredients array is in allIngredient's keys
-            this.ingredients.every( x=>Object.keys(allIngredients).includes(x) ) && 
+            // all pizzas are valid
+            this.items.every(item=>item.validate()) &&
             // self explanatory
             typeof this.name == "string" &&
             typeof this.deliveryDate == "number" &&
@@ -85,7 +84,28 @@ class OrderRecord {
     }
 }
 
+
+// represents a pizza in a order
+class OrderItem{
+    constructor(ingredients){
+        if(ingredients == undefined){
+            this.ingredients = []
+        }else{
+            this.ingredients = ingredients
+        }
+        this.id = Math.random()*Number.MAX_SAFE_INTEGER
+    }
+    validate(){
+        return (
+            // ingredients is an array
+            Array.isArray(this.ingredients) &&
+            // every item in ingredients array is in allIngredient's keys
+            this.ingredients.every( x=>Object.keys(allIngredients).includes(x) )
+        )
+    }
+}
+
 // create single instance to share everywhere
 const database = new Database();
 
-export { database, OrderRecord };
+export { database, OrderRecord, OrderItem };
