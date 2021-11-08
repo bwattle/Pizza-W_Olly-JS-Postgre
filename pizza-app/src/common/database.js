@@ -1,4 +1,4 @@
-import { allIngredients } from "./ingredient-selector";
+import { allIngredients } from "../order/ingredient-selector";
 
 // uses localstorage to store records
 // TODO: change to use remote sql database

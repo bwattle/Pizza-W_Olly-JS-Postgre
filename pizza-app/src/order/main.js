@@ -2,10 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Checkout from "./checkout.js";
 import RecordTable from './record-table.js';
-import { database, OrderItem } from './database.js';
+import { database, OrderItem } from '../common/database.js';
 import PizzaCreator from './pizza-creator.js';
 
 import "./index.css"
+import "../common/topbar.css"
+import "../common/common.css"
 
 const App = ()=>{
     const [ orderItems, setOrderItems ] = React.useState([]);
@@ -14,19 +16,25 @@ const App = ()=>{
         setOrderItems( orderItems.concat(new OrderItem([])) )
     }
 
+    const setPizza = (id, val)=>{
+        const matches = orderItems.filter(i=>i.id==id)
+        if(matches.length == 0){
+            console.log("Tried to set pizza with invalid id")
+        }
+    }
+
     return (
         <div id="app-main">
-            <header>
                 {/* <div onClick={()=>{console.log(showingOrders);setShowingOrders(!showingOrders)}} id="login-button" className="noselect">
                     View orders
                 </div> */}
-            </header>
             {/* { showingOrders?<RecordTable close={()=>{setShowingOrders(false)}} records={database.records}/>:null} */}
             <div id="order-form">
 
                 { orderItems.map((item, idx)=>{
                     const closeFunc = ()=>setOrderItems(orderItems.splice(idx, 1))
-                    return <PizzaCreator close={closeFunc} key={item.id} pizza={item}/>
+                    const setFunc = (val)=>setPizza(item.id, val)
+                    return <PizzaCreator close={closeFunc} key={item.id} setPizza={setFunc} pizza={item}/>
                 })}
                 
                 <hr />

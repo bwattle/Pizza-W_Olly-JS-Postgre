@@ -1,6 +1,6 @@
 import React from "react";
 import { allIngredients, basePrice } from "./ingredient-selector";
-import { database, OrderRecord } from './database.js';
+import { database, OrderRecord } from '../common/database.js';
 import Validate from "./validateWrapper";
 
 function sum(arr){
@@ -46,6 +46,7 @@ export function Checkout(props){
     const prices = props.pizzas.map(
         p=>sum(p.ingredients.map(i=>allIngredients[i].price))
     )
+    console.log(props.pizzas)
     const total = sum(prices) + basePrice;
 
     //////////// HANDLE SUBMIT /////////////
@@ -58,11 +59,11 @@ export function Checkout(props){
 
     // checks if all inputs are valid
     const validateInput = ()=>{
-        if(name.length == 0){
-            return false
-        }
-        if(!cash){
-            // if(check card details)
+        if(name.length == 0 ||
+            !cash ||
+            postcode.length == 0 ||
+            address.length == 0 ||
+            suburb.length == 0){
             return false
         }
         return true

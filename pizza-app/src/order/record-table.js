@@ -1,4 +1,4 @@
-import { database } from "./database.js";
+import { database } from "../common/database.js";
 import React from "react";
 
 function RecordEntry(props){
