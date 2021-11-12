@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
 
 app.get("/list-pizzas", (req, res)=>{
     console.log("params ", req.params)
-    getOrders(res)
+    getOrders("not done yet", res)
 })
 
 app.listen(port, () => {
