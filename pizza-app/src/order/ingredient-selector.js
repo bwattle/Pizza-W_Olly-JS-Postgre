@@ -1,3 +1,5 @@
+import { allIngredients } from "../common/database" 
+import Validate from "./validateWrapper"
 
 const SelectedIngredient = (props)=>{
     return (
@@ -33,10 +35,11 @@ const IngredientsSelector = (props)=>{
     // list of all selected ingredients
     const selected = props.ings;
     // all non selected ingredients
+    console.log(allIngredients)
     const notSelected = Object.keys(allIngredients).filter(i=>!props.ings.includes(i))
 
     return (
-        <div>
+        <Validate valid={!selected.includes("pineapple")} text="No pineapple allowed">
             <div id="ingredients-selector">
                 <div className="ingredients-yes">
                     {selected.map((ing, idx)=>{
@@ -49,27 +52,8 @@ const IngredientsSelector = (props)=>{
                     })}
                 </div>
             </div>
-        </div>
+        </Validate>
     )
 }
 
-const basePrice = 6;
-// provides a mapping between interal names and display names
-const allIngredients = {
-    cheese:      { name: "Cheese", price: 1 },
-    beef:        { name: "Ground beef", price: 2 },
-    ham:         { name: "Ham", price: 2 },
-    pep:         { name: "Sliced Pepperoni", price: 2 },
-    mushroom:    { name: "Mushrooms", price: 1 },
-    tomato:      { name: "Tomato Chunks", price: 1 },
-    spinach:     { name: "Spinach", price: 1 },
-    bacon:       { name: "Bacon", price: 3 },
-    onion:       { name: "Red Onion", price: 1 },
-    pineapple:   { name: "Pineapple", price: 9999 },
-    prawn:       { name: "Prawns", price: 3 },
-}
-
-
-
-export { allIngredients, basePrice };
 export default IngredientsSelector;

@@ -1,4 +1,4 @@
-import { allIngredients } from "../order/ingredient-selector";
+import { sum } from "./utils"
 
 // uses localstorage to store records
 // TODO: change to use remote sql database
@@ -14,8 +14,8 @@ class Database{
         // creates dummy OrderRecord instances and sets all attributes
         this.newRecords = []
         for(let record of this.records){
-            const newRecord = new OrderRecord([], 0, "", "cash", 0, -1)
-            Object.assign(newRecord, record)
+            const newRecord = new OrderRecord([], new Date(), false, -1)
+            // Object.assign(newRecord, record)
             this.newRecords.push(newRecord);
         }
         this.records = this.newRecords;
@@ -54,14 +54,10 @@ class Database{
 
 
 class OrderRecord {
-    constructor(items, deliveryDate, name, payment, price, id){
+    constructor(items, deliveryDate, cash){
         this.items = items; // array of pizzas
-        this.deliveryDate = deliveryDate; // number as seconds since epoch
-        this.name = name; // string
-        this.payment = payment; // either "cash" or "card"
-        this.price = price; // number
-        this.id = id; // large number
-        this.filled = false;
+        this.ready_by = deliveryDate; // as js date object
+        this.cash = cash; // boolean
 
         if(!this.validate()){
             throw "Invaid OrderRecord"
@@ -72,28 +68,27 @@ class OrderRecord {
     validate(){
         return (
             // all pizzas are valid
-            this.items.every(item=>item.validate()) &&
-            // self explanatory
-            typeof this.name == "string" &&
-            typeof this.deliveryDate == "number" &&
-            (this.payment == "cash" || this.payment == "card") &&
-            typeof this.price == "number" &&
-            typeof this.id == "number" &&
-            typeof this.filled == "boolean"
+            this.items.every(item=>item instanceof Pizza && item.validate()) &&
+            this.ready_by instanceof Date &&
+            typeof this.cash == "boolean"
         )
+    }
+
+    getPrices(){
+        return sum(this.items.map(x=>x.getPrice()))
     }
 }
 
-
 // represents a pizza in a order
-class OrderItem{
-    constructor(ingredients){
-        if(ingredients == undefined){
-            this.ingredients = []
+class Pizza {
+    constructor(ingredients, quantity, id){
+        this.ingredients = ingredients
+        this.quantity = quantity
+        if(id == undefined){
+            this.id = Math.random()*Number.MAX_SAFE_INTEGER
         }else{
-            this.ingredients = ingredients
+            this.id = id
         }
-        this.id = Math.random()*Number.MAX_SAFE_INTEGER
     }
     validate(){
         return (
@@ -103,9 +98,35 @@ class OrderItem{
             this.ingredients.every( x=>Object.keys(allIngredients).includes(x) )
         )
     }
+    getPrice(){
+        const singlePrice = sum(this.ingredients.map(i=>allIngredients[i].price))
+        return (singlePrice + basePizzaPrice) * this.quantity
+    }
 }
+
+// staic factory method
+Pizza.newEmptyPizza = ()=>new Pizza([], 1) 
+
+
+const basePizzaPrice = 6;
+// provides a mapping between interal names and display names
+const allIngredients = {
+    cheese:      { name: "Cheese", price: 1 },
+    beef:        { name: "Ground beef", price: 2 },
+    ham:         { name: "Ham", price: 2 },
+    pep:         { name: "Sliced Pepperoni", price: 2 },
+    mushroom:    { name: "Mushrooms", price: 1 },
+    tomato:      { name: "Tomato Chunks", price: 1 },
+    spinach:     { name: "Spinach", price: 1 },
+    bacon:       { name: "Bacon", price: 3 },
+    onion:       { name: "Red Onion", price: 1 },
+    pineapple:   { name: "Pineapple", price: 9999 },
+    prawn:       { name: "Prawns", price: 3 },
+}
+
+const orderBasePrice = 2; // delivery ect
 
 // create single instance to share everywhere
 const database = new Database();
 
-export { database, OrderRecord, OrderItem };
+export { database, OrderRecord, Pizza, allIngredients, basePizzaPrice, orderBasePrice };

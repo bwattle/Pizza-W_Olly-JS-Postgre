@@ -1,20 +1,21 @@
-import { allIngredients, basePrice } from "./ingredient-selector"
-import BaseSelect from './pizza-preset';
+import { allIngredients, basePrice, Pizza } from "../common/database"
+import PresetSelect from './pizza-preset';
 import IngredientsSelector from './ingredient-selector';
 import React from "react";
 
 import "./pizza-creator.css";
 
 const PizzaCreator = (props) => {
-    const [ curIngredients, setIngredients ] = React.useState([]);
-    const [ number, setNumber ] = React.useState(1);
-
     const allNumbers = [...Array(10).keys()] // generate array of all numbers 1-10
     const numberOptions = allNumbers.map(idx=>{const val = idx+1; return <option key={val}>{val}</option>})
 
-    const handleAmountChange = event=>{
-        console.log(event.target.value, number);
-        setNumber(event.target.value)
+    const handleAmountChange = (event)=>{
+        const quant = event.target.value
+        props.setPizza(new Pizza(props.pizza.ingredients, quant, props.pizza.id))
+    }
+
+    const setIngredients = (ingredients) => {
+        props.setPizza(new Pizza(ingredients, props.pizza.quantity, props.pizza.id))
     }
 
     return (
@@ -25,18 +26,19 @@ const PizzaCreator = (props) => {
             
             <div className="creator-content">
                 
-                <BaseSelect setIngs={setIngredients} />
-                <IngredientsSelector ings={curIngredients} setIngs={setIngredients} />
+                <PresetSelect setIngs={setIngredients} />
+
+                <IngredientsSelector ings={props.pizza.ingredients} setIngs={setIngredients} />
 
                 <label>
-                    Amount
-                    <select name="cars" id="cars" value={number.toString()} onChange={handleAmountChange}>
+                    Amount: 
+                    <select name="cars" id="cars" value={props.pizza.quantity.toString()} onChange={handleAmountChange}>
                         {numberOptions}
                     </select>
                 </label>
                 <br />
                 Pizza cost ${
-                    curIngredients.map((a)=>allIngredients[a].price).reduce((a,b)=>a+b, 0) + basePrice
+                    props.pizza.getPrice()
                 }
             </div>
         </div>

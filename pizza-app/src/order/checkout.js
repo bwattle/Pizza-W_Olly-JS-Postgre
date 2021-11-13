@@ -1,12 +1,7 @@
 import React from "react";
-import { allIngredients, basePrice } from "./ingredient-selector";
-import { database, OrderRecord } from '../common/database.js';
+import { database, OrderRecord, orderBasePrice } from '../common/database.js';
 import Validate from "./validateWrapper";
-
-function sum(arr){
-    console.log(arr)
-    return arr.reduce((a, b)=>a+b, 0)
-}
+import { sum } from "../common/utils"
 
 function OnlinePayment(props){
     return (
@@ -25,7 +20,7 @@ export function Checkout(props){
 
     ///////// ONCHANGE HANDLERS //////////
     // mostly just sets state to the value
-    const handleCashChange = (event) => setCash(event.target.checked)
+    const handleCashChange = (event)=>setCash(event.target.checked)
     const handleAddrChange = (event)=>setAddress(event.target.value)
     const handleSubrChange = (event)=>setSuburb(event.target.value)
     // name dosent allow numbers
@@ -44,33 +39,30 @@ export function Checkout(props){
 
     //////////// CALCULATE TOTAL /////////////
     const prices = props.pizzas.map(
-        p=>sum(p.ingredients.map(i=>allIngredients[i].price))
+        pizza=>pizza.getPrice()
     )
-    console.log(props.pizzas)
-    const total = sum(prices) + basePrice;
+    const total = sum(prices) + orderBasePrice
 
     //////////// HANDLE SUBMIT /////////////
     const handleCreateOrder = ()=>{
-        const uid = Math.floor(Math.random()*Number.MAX_SAFE_INTEGER)
-
-        database.addRecord(new OrderRecord(props.pizzas, 0, name, cash?"cash":"card", total, uid))
+        database.addRecord(new OrderRecord(props.pizzas, 0, name, cash?"cash":"card", total))
         console.log(database.records)
     }
 
     // checks if all inputs are valid
     const validateInput = ()=>{
-        if(name.length == 0 ||
-            !cash ||
-            postcode.length == 0 ||
-            address.length == 0 ||
-            suburb.length == 0){
-            return false
+        if(name.length > 0 &&
+            cash &&
+            postcode.length == 4 &&
+            address.length > 0 &&
+            suburb.length > 0){
+            return true
         }
-        return true
+        return false
     }
 
     const now = new Date(new Date().getTime() + 1000*60*5) // adds five minutes
-    const day = now.getDay().toString().padStart(2, "0")
+    const day = now.getDate().toString().padStart(2, "0")
     const month = (now.getMonth()+1).toString().padStart(2, "0")
     const year = now.getFullYear().toString()
     const hour = now.getHours().toString().padStart(2, "0")
@@ -80,11 +72,15 @@ export function Checkout(props){
         <div id="price-outer">
             Total: ${total}
             <div>
+                <h4>Customer Details</h4>
                 <Validate valid={name.length > 0}>
                     <label htmlFor="fname">First name:</label>
                     <input type="text" id="fname" name="fname" value={name} onChange={handleNameChange}></input>
                 </Validate>
                 <br/>
+            </div>
+            <div>
+                <h4>Payment</h4>
                 <Validate valid={cash==true}>
                     <label htmlFor="payType">Paying cash?</label>
                     <input type="checkbox" id="cash-checkbox" name="payType" value={cash} onChange={handleCashChange}></input>
@@ -93,6 +89,7 @@ export function Checkout(props){
                
             </div>
             <div id="delivery">
+                <h4>Delivery Details</h4>
                 <div>
                     <input type="datetime-local" min={`${year}-${month}-${day}T${hour}:${minute}:00.00`}></input>
                 </div>

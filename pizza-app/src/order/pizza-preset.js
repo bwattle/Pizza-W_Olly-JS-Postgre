@@ -9,7 +9,7 @@ const presets = {
     "Hawaiian": ["cheese", "tomato", "pineapple", "ham"],
 }
 
-function BaseSelect(props) {
+function PresetSelect(props) {
     const [lastPreset, setLastPreset] = React.useState("None");
     console.log(lastPreset)
 
@@ -34,5 +34,5 @@ function BaseSelect(props) {
     );
 }
 
-export default BaseSelect;
+export default PresetSelect;
 export { presets };
