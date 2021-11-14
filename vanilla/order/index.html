@@ -11,17 +11,12 @@
     <div>
         <a href="../">Back</a>
     </div>
-    <div id="orderProgress">
-        <div>Step 1</div>
-        <div>Step 2</div>
-        <div>Step 3</div>
-    </div>
     <form>
         <fieldset>
             <legend>Create pizza</legend>
             <label>
                 Select preset:
-                <select name="cars" id="cars" onchange="setPreset(event.target.value)">
+                <select id="cars" onchange="setPreset(event.target.value)">
                     <option value="plain">Plain</option>
                     <option value="hawaiian">Hawaiian</option>
                     <option value="meatlovers">Meatlovers</option>
@@ -35,7 +30,7 @@
                 <template id="ingredientItemTemplate">
                     <label>
                         [<span id="labelText">Bru</span>
-                        <input class="ingredientInput" type="checkbox" name="ingredientRadio" value="">]
+                        <input class="ingredientInput" type="checkbox" name="ingredientRadio">]
                         <br>
                     </label>
                 </template>
@@ -45,38 +40,37 @@
             <legend>Customer Info</legend>
             <label>
                 Postcode
-                <input type="text" id="testInput" class="validate onlyNums onlyFour">
+                <input type="text" id="testInput" class="validate onlyNums onlyFour" required name="postcode">
             </label>
             <br>
             <label>
                 First Name:
-                <input type="text">
+                <input type="text" required name="fname">
             </label>
             <label>
                 Last Name:
-                <input type="text">
+                <input type="text" required name="surname">
             </label>
         </fieldset>
         <fieldset>
             <legend>Order Info</legend>
             <label>
                 Number of pizzas
-                <input type="number" min=1 max=99 step=1>
+                <input type="number" min=1 max=99 step=1 required name="quantity">
             </label>
             <br>
                 Delivery:
                 <br>
                 <label>
                     ASAP
-                    <input type='checkbox' checked onchange="setAsap(event.target.checked)">
+                    <input type='checkbox' checked onchange="setAsap(event.target.checked)" name="asap">
                 </label>
                 <br>
                 <div id="datetimeSelector">
                     <!-- <input type="datetime-local"> -->
                     <label>
                         Choose your delivery date:
-                        <input id="deliveryDate" type="date" name="party" min="2021-10-25" required>
-
+                        <input id="deliveryDate" type="date" min="2021-10-25" name="date">
                     </label>
                 </div>
                 <div id="asapEst">

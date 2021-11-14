@@ -11,6 +11,7 @@ function createIngredients(){
         // store ingredient name in its id
         const innerInput = clone.querySelector("input")
         innerInput.id = "ing-"+key
+        innerInput.name = "ing-"+key
 
         ingsDiv.appendChild(clone)
     }
@@ -45,7 +46,7 @@ setAsap(true)
 function setDateMin(){
     const dateSelector = document.getElementById("deliveryDate")
     const now = new Date()
-    const day = now.getDay().toString().padStart(2, "0")
+    const day = now.getDate().toString().padStart(2, "0")
     const month = (now.getMonth()+1).toString().padStart(2, "0")
     const year = now.getFullYear().toString()
     dateSelector.min = `${year}-${month}-${day}`
