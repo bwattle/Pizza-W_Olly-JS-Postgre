@@ -1,7 +1,6 @@
 import React from 'react';
-import { allIngredients } from "./ingredient-selector.js"
+import { allIngredients } from "../common/database"
 
-const ings = allIngredients;
 const presets = {
     "None": [],
     "Cheese": ["cheese"],
@@ -18,7 +17,6 @@ function PresetSelect(props) {
         props.setIngs(presets[event.target.value]);
     };
 
-    // https://mui.com/components/selects/#props
     return (
         <div>
             <label htmlFor="preset">Select preset: </label>
