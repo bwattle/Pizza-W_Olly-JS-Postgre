@@ -3,11 +3,11 @@ import ReactDOM from 'react-dom';
 import Checkout from "./checkout.js";
 import { database, Pizza } from '../common/database.js';
 import PizzaCreator from './pizza-creator.js';
+import Validate from './validateWrapper.js';
 
 import "./index.css"
 import "../common/topbar.css"
 import "../common/common.css"
-import Validate from './validateWrapper.js';
 
 const App = ()=>{
     // order items is a list of pizzas

@@ -124,8 +124,6 @@ const allIngredients = {
     prawn:       { name: "Prawns", price: 3 },
 }
 
-const orderBasePrice = 2; // delivery ect
-
 // create single instance to share everywhere
 const database = new Database();
 

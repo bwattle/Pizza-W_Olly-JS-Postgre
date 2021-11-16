@@ -41,7 +41,7 @@ export function Checkout(props){
     const prices = props.pizzas.map(
         pizza=>pizza.getPrice()
     )
-    const total = sum(prices) + orderBasePrice
+    const total = sum(prices)
 
     //////////// HANDLE SUBMIT /////////////
     const handleCreateOrder = ()=>{

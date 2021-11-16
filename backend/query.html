@@ -1,0 +1,31 @@
+Enter SQL query:<br>
+<input type="text" id="text-field">
+<br>
+Password:<br>
+<input type="text" id="pass-field">
+<button id="submit-button">Submit</button>
+<br><br>
+Output:
+<div style="border: 1px solid black; min-height: 1em;" id="output"></div>
+<script>
+    const inputEl = document.getElementById("text-field");
+    const passEl = document.getElementById("pass-field")
+    const submitEl = document.getElementById("submit-button")
+
+    const outputEl = document.getElementById("output");
+
+    submitEl.onclick = ()=>{
+        const queryString = new URLSearchParams(["q", inputEl.value], ["p", passEl.value]).toString()
+        console.log(queryValue, passValue);
+
+        function reqListener () {
+            console.log(this.responseText);
+            outputEl.innerHTML = this.responseText;
+        }
+
+        var req = new XMLHttpRequest();
+        req.addEventListener("load", reqListener);
+        req.open("GET", `/_query/?q=${queryValue}&p=${passValue}`);
+        req.send();
+    }
+</script>

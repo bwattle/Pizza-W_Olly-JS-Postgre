@@ -32,7 +32,6 @@ function createTables(){
 }
 
 
-
 /**
  * 
  * @param {string} query sql query
@@ -45,13 +44,6 @@ function makeQuery(query, callback){
         }
         callback(result)
     })
-    // let bodyText = ""
-    // console.log("got database reponse, rows", res.rowCount)
-    // for(const row of res.rows){
-    //     bodyText += JSON.stringify(row);
-    //     bodyText += "\n"
-    // }
-    // reqRes.send(bodyText)
 }
 
 app.get('/', (req, res) => {
@@ -65,35 +57,97 @@ app.get("/list-tables", (req, res)=>{
     makeQuery(`SELECT *
 FROM pg_catalog.pg_tables
 WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema';`,
-    x=>res.send(x))
+    x=>res.send("rowCount: "+x.rowCount+"<br>"+JSON.stringify(x.rows)))
 })
 
 app.get("/list-orders", (req, res)=>{
     console.log("list orders");
     makeQuery(`SELECT * FROM "Orders"`, x=>res.send(x))
 })
-
-app.post("/create-order", (req, res)=>{
-
+app.get("/list-pizzas", (req, res)=>{
+    console.log("list pizzas");
+    makeQuery(`SELECT * FROM "OrderItems"`, x=>res.send(x))
 })
 
-app.post("/create-pizza", (req, res)=>{
+app.get("/get-order-fields", (req, res)=>{
+    console.log("list order fields");
+    makeQuery(
+        `SELECT
+            column_name,
+            data_type
+        FROM
+            information_schema.columns
+        WHERE
+            table_name = 'Orders';`,
+     x=>res.send(x.rows))
+})
+app.get("/get-pizza-fields", (req, res)=>{
+    console.log("list pizza fields");
+    makeQuery(
+        `SELECT
+            column_name,
+            data_type
+        FROM
+            information_schema.columns
+        WHERE
+            table_name = 'OrdersItems';`,
+     x=>res.send(x.rows))
+})
+
+const checkTwoDigit = (val, min, max)=>{
+    return  val.length == 2 && parseInt(val) >= min && parseInt(val) <= max
+}
+// app.post("/create-order", (req, res)=>{
+//     // validate data
+//     if(req.query.year.length == 4 && 
+//         req.query.month.length == 2 && parseInt(req.query.month) >= 1 && parseInt(req.query.month <= 12) &&
+//         checkTwoDigit(req.query.month, 1, 12)
+//         req.query.day.length == 2 && parseInt(req.query.day) >= 1 && parseInt(req.query.day) <= 31 &&
+//         )
+//     const query = `INSERT INTO "Orders" (
+//             "ready_by",
+//             "delivery",
+//             "address",
+//             "postcode",
+//             "cash",
+//             "name",
+//             "credit_card",
+//             "ccv")
+//         VALUES (
+//             make_timestamp(${req.query}, 7, 15, 8, 15, 23.5),
+            
+//         );`
+// })
+
+// app.post("/create-pizza", (req, res)=>{
     
+// })
+
+app.get("/query", (req, res)=>{
+    res.sendFile('query.html', {root: __dirname })
+})
+app.get("/_query", (req, res)=>{
+    console.log(req.query.q, req.query.p);
+    if(req.query.q && req.query.p == "1234"){
+        makeQuery(req.query.q, x=>res.send(x))
+    }
 })
 
-app.get("/clean", (req, res)=>{
-    console.log("dropping tables");
-    makeQuery(`DROP TABLE "OrderItems";
-DROP TABLE "Orders";
-DROP TABLE "Customers";`, x=>res.send(x))
-    // createTables()
-})
+/*
+clean:
+DROP TABLE OrderItems;
+DROP TABLE Orders;
+*/
 
-app.get("/create-tables", (req, res)=>{
-    console.log("creating tables");
-    createTables();
-    res.send("success!")
-})
+// app.get("/create-tables", (req, res)=>{
+//     if(req.query.pass == "123456789"){
+//         console.log("creating tables");
+//         createTables();
+//         res.send("attempted making tables")
+//     }else{
+//         res.send(`Password incorrect, given password: ${JSON.stringify(req.query.pass)}`)
+//     }
+// })
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
