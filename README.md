@@ -1,4 +1,7 @@
 # sdd-pizza
+
+You can find the frontend [here](https://peaceful-clarke-e20298.netlify.app/) and the backend [here](https://pizza-db.herokuapp.com/query)
+
 pizza thing for software class
 
 Uses client side rendering, where the html is generated dynamically on the client with react.

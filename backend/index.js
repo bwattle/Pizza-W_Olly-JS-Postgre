@@ -2,6 +2,9 @@ const { Pool } = require('pg')
 const express = require('express')
 const fs = require("fs")
 
+// push with
+// git subtree push --prefix backend heroku master
+
 
 const app = express()
 const port = process.env.PORT || 3000
