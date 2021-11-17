@@ -122,6 +122,7 @@ const allIngredients = {
     onion:       { name: "Red Onion", price: 1 },
     pineapple:   { name: "Pineapple", price: 9999 },
     prawn:       { name: "Prawns", price: 3 },
+    olive:       { name: "Olives", price: 2 },
 }
 
 // create single instance to share everywhere

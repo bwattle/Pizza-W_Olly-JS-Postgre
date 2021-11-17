@@ -25,20 +25,30 @@
 
 .ingredient-item{
     background-color: #eee;
-    margin: 3px;
+    margin: 10px;
+    min-height: 40px;
     padding: 5px;
     padding-left: 3vw;
     padding-right: 1vw;
     /* display: inline; */
+    box-shadow: 2px 3px 5px #aaa;
+    transform: translate(-1px, -1.5px);
 }
 .ingredient-item:hover{
     background-color: #ddd;
+    box-shadow: 1px 1.5px 5px #aaa;
+    transform: translate(0px, 0px);
+}
+.ingCheck:checked + div{
+    box-shadow: inset 2px 3px 5px #aaa;
+    transform: translate(1px, 1.5px);
 }
 
 #ingredients-selector{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    /* flex-wrap: wrap; */
+    /* justify-content: space-evenly; */
     margin: 20px;
     padding: 10px;
     border-radius: 5px;
@@ -48,11 +58,4 @@
 .ingredients-yes .ingredients-no {
     display: flex;
     flex-wrap: wrap;
-}
-
-.ingredients-yes::before{
-    content: "Yes";
-}
-.ingredients-no::before{
-    content: "No";
 }
