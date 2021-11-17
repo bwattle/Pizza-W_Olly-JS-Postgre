@@ -1,18 +1,4 @@
 
-.red{
-    color: #d45;
-    padding-left: 5px;
-}
-.green{
-    color: #0b1;
-    padding-left: 5px;
-}
-
-#outer-div, #app-main, body{
-    margin: 0;
-    padding: 0;
-}
-
 #login-button{
     background-color: #bbb;
     color: #000;
@@ -93,7 +79,16 @@ table{
 .table-sortable:hover{
     background-color: #aaa;
 }
-
+#pizza-adder{
+    text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+#pizza-adder:hover{
+    text-decoration-line: underline;
+    cursor: pointer;
+}
 #pizza-creator-add{
     background-color: #444;
     width: 40px;
@@ -107,8 +102,11 @@ table{
 }
 #pizza-creator-add:hover{
     background-color: #555;
-    transition: scale(1.1);
 }
 #pizza-creator-add:active{
     background-color: #666;
+}
+
+button{
+    margin: 0;
 }

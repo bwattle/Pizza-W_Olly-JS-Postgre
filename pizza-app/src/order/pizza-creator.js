@@ -10,7 +10,7 @@ const presets = {
     "None": [],
     "Cheese": ["cheese"],
     "Meatlovers": ["cheese", "beef", "ham", "pep", "onion"],
-    "Hawaiian": ["cheese", "tomato", "pineapple", "ham"],
+    "Hawaiian": ["cheese", "tomato", "ham"],
 }
 
 function PresetSelect(props) {
@@ -44,9 +44,9 @@ const Ingredient = (props)=>{
                 className="ingCheck" type="checkbox" hidden
                 value={props.selected} onChange={e=>{props.onClick(props.ing, e.target.checked)}}
             ></input>
-            <div className="ingredient-item">
+            <div className={`ingredient-item${props.selected?" ing-item-checked":""}`}>
                 <span className="noselect">{allIngredients[props.ing].name}  ${allIngredients[props.ing].price}</span>
-                <span className={`noselect ${props.selected?"red":"green"}`}>{props.selected?"-":"+"}</span>
+                {/* <span className={`noselect ${props.selected?"red":"green"}`}>{props.selected?"-":"+"}</span> */}
             </div>
         </label>
     )
@@ -76,7 +76,6 @@ const PizzaCreator = (props) => {
             // filter to remove ingredient
             newIngs = props.pizza.ingredients.filter(item => item !== ing)
         }
-        console.log(val)
         setIngredients(newIngs)
     }
 
@@ -96,7 +95,7 @@ const PizzaCreator = (props) => {
                 
                 <PresetSelect setIngs={setIngredients} />
 
-                <Validate valid={!props.pizza.ingredients.includes("pineapple")} text="No pineapple allowed">
+                <Validate valid={!props.pizza.ingredients.includes("pineapple")} text="Thats gross">
                     <div id="ingredients-selector">
                         {ingredientElements}
                     </div>

@@ -8,3 +8,11 @@
     user-select: none; /* Non-prefixed version, currently
     supported by Chrome, Edge, Opera and Firefox */
 }
+*{
+    font-family: sans-serif;
+}
+#outer-div, #app-main, body{
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}

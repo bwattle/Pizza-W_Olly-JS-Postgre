@@ -3,12 +3,13 @@ import { database, OrderRecord } from '../common/database.js';
 import Validate from "./validateWrapper";
 import { sum } from "../common/utils"
 
+import "./checkout.css"
 
 function Name(props){
-    return (<div>
+    return (<Validate valid={props.name.length>1}>
         <label htmlFor="fname">First name:</label>
         <input type="text" id="fname" name="name" value={props.name} onChange={props.setName}></input>
-    </div>)
+    </Validate>)
 }
 
 
@@ -17,22 +18,30 @@ function Payment(props){
     if(props.cash){
         content = null
     }else{
-        content = (<div>
-            <label>
-                Credit card number:
-                <input type="number" value={props.ccNum} onChange={props.setCcNum}></input>
-            </label>
-            <label>
-                CVV:
-                <input type="number" value={props.ccv} onChange={props.setCcv}></input>
-            </label>
+        content = (
+        <div>
+            <Validate valid={props.ccNum.length >= 14}>
+                <label>
+                    Credit card number:
+                    <input type="number" value={props.ccNum} onChange={props.setCcNum}></input>
+                </label>
+            </Validate>
+            <br />
+            <Validate valid={props.ccv.length == 3}>
+                <label>
+                    CVV:
+                    <input type="number" value={props.ccv} onChange={props.setCcv}></input>
+                </label>
+            </Validate>
         </div>)
     }
     return (
         <div>
             <h4>Payment</h4>
-            <label htmlFor="payType">Paying cash?</label>
-            <input type="checkbox" id="cash-checkbox" value={props.cash} onChange={props.setCash}></input>
+            <label>
+                Paying cash?
+                <input type="checkbox" id="cash-checkbox" value={props.cash} onChange={props.setCash}></input>
+            </label>
             {content}
         </div>
     )
@@ -44,7 +53,7 @@ function Delivery(props){
 
     const addressPicker = (
         <div>
-            <Validate valid={props.address.length>1}>
+            <Validate valid={props.address.length>=1}>
                 <label>Street address:
                     <input onChange={props.setAddr} value={props.address} type="text"></input>
                 </label>
@@ -59,10 +68,12 @@ function Delivery(props){
     )
 
     return <div>
-        Delivery?
-        <input type="checkbox" id="delivery-checkbox" value={props.delivery} onChange={props.setDelivery}></input>
+        <label>
+            Delivery?
+            <input type="checkbox" id="delivery-checkbox" value={props.delivery} onChange={props.setDelivery}></input>
+        </label>
         <br />
-        <Validate valid={props.ready>getDate()} text="Date to early">
+        <Validate valid={props.ready.toISOString()>getDate().toISOString()} text="Date to early">
             <label>
                 {props.delivery?"Arrive at ":"Pickup ready at "}
                 <input type="datetime-local" min={dateToString(minDate)} value={dateToString(props.ready)} onChange={props.setReadyBy}></input>
@@ -148,7 +159,6 @@ export function Checkout(props){
             Total: ${total}
             <h4>Customer Details</h4>
             <Name name={name} setName={handleNameChange} />
-            <br/>
             <Payment
                 cash={cash} setCash={handleCashChange} ccNum={ccNum}
                 setCcNum={handleCcNumChange} ccv={ccv} setCcv={handleCcvChange}

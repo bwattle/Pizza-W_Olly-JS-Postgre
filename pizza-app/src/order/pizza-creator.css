@@ -15,41 +15,44 @@
 
 .pizza-creator-outer{
     border: 1px solid black;
-    width: 90vw;
+    /* width: 90vw; */
     padding: 2vw;
     display: flex;
     flex-direction: column;
     margin-bottom: 30px;
+    background-color: #eee;
 }
 
 
 .ingredient-item{
     background-color: #eee;
-    margin: 10px;
-    min-height: 40px;
+    text-align: center;
+    min-width: 20ch;
+    margin: 5px;
+    min-height: 3em;
     padding: 5px;
-    padding-left: 3vw;
-    padding-right: 1vw;
-    /* display: inline; */
-    box-shadow: 2px 3px 5px #aaa;
+    box-shadow: 2px 3px 3px #ccc, -2px -3px 3px #fff;
     transform: translate(-1px, -1.5px);
+    border-radius: 10px;
 }
 .ingredient-item:hover{
-    background-color: #ddd;
-    box-shadow: 1px 1.5px 5px #aaa;
+    /* background-color: #ddd; */
+    box-shadow: 1px 1px 3px #ccc, -1px -1.5px 3px #fff;
     transform: translate(0px, 0px);
 }
-.ingCheck:checked + div{
-    box-shadow: inset 2px 3px 5px #aaa;
-    transform: translate(1px, 1.5px);
+/* .ingCheck:checked + div{ */
+.ing-item-checked{
+    box-shadow: inset 2px 3px 3px #ccc, inset -2px -3px 3px #fff !important;
+    transform: translate(1px, 1.5px) !important;
+    font-style: italic;
+    background-color: #ddd;
 }
 
 #ingredients-selector{
-    display: grid;
-    grid-template-columns: auto auto auto;
+    display: flex;
+    flex-wrap: wrap;
     /* flex-wrap: wrap; */
-    /* justify-content: space-evenly; */
-    margin: 20px;
+    justify-content: center;
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ddd;
@@ -58,4 +61,13 @@
 .ingredients-yes .ingredients-no {
     display: flex;
     flex-wrap: wrap;
+}
+
+.red{
+    color: #d45;
+    padding-left: 5px;
+}
+.green{
+    color: #0b1;
+    padding-left: 5px;
 }
