@@ -1,22 +1,23 @@
 const { Pool } = require('pg')
 const express = require('express')
 const fs = require("fs")
+const cors = require('cors')
 
 // push with
 // git subtree push --prefix backend heroku master
 
 
 const app = express()
+app.use(cors())
 const port = process.env.PORT || 3000
+
+console.log(process.env.DATABASE_URL);
 
 const pool = new Pool({
 	connectionString: process.env.DATABASE_URL,
     ssl: {
         rejectUnauthorized: false
-    },
-    max: 20,
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 2000,
+    }
 })
 
 // creates tables from schema.sql
@@ -34,7 +35,6 @@ function createTables(){
     })
 }
 
-
 /**
  * 
  * @param {string} query sql query
@@ -43,7 +43,8 @@ function createTables(){
 function makeQuery(query, callback){
     pool.query(query, (err, result) => {
         if (err) {
-            return console.error('Error executing query', err.stack)
+            console.error('Error executing query', err.stack)
+            callback(err.stack)
         }
         callback(result)
     })
@@ -72,7 +73,7 @@ app.get("/list-pizzas", (req, res)=>{
     makeQuery(`SELECT * FROM "OrderItems"`, x=>res.send(x))
 })
 
-app.get("/get-order-fields", (req, res)=>{
+app.get("/order-fields", (req, res)=>{
     console.log("list order fields");
     makeQuery(
         `SELECT
@@ -84,7 +85,7 @@ app.get("/get-order-fields", (req, res)=>{
             table_name = 'Orders';`,
      x=>res.send(x.rows))
 })
-app.get("/get-pizza-fields", (req, res)=>{
+app.get("/pizza-fields", (req, res)=>{
     console.log("list pizza fields");
     makeQuery(
         `SELECT
@@ -97,42 +98,94 @@ app.get("/get-pizza-fields", (req, res)=>{
      x=>res.send(x.rows))
 })
 
-const checkTwoDigit = (val, min, max)=>{
-    return  val.length == 2 && parseInt(val) >= min && parseInt(val) <= max
-}
-// app.post("/create-order", (req, res)=>{
-//     // validate data
-//     if(req.query.year.length == 4 && 
-//         req.query.month.length == 2 && parseInt(req.query.month) >= 1 && parseInt(req.query.month <= 12) &&
-//         checkTwoDigit(req.query.month, 1, 12)
-//         req.query.day.length == 2 && parseInt(req.query.day) >= 1 && parseInt(req.query.day) <= 31 &&
-//         )
-//     const query = `INSERT INTO "Orders" (
-//             "ready_by",
-//             "delivery",
-//             "address",
-//             "postcode",
-//             "cash",
-//             "name",
-//             "credit_card",
-//             "ccv")
-//         VALUES (
-//             make_timestamp(${req.query}, 7, 15, 8, 15, 23.5),
-            
-//         );`
-// })
+app.get("/create-order", (req, res)=>{
+    // validate data
+    try{
+        if(
+            (
+                (req.query.delivery == "true" && 
+                req.query.address.length >= 1 &&
+                req.query.postcode.length == 4)
+            ||
+                req.query.delivery == "false"
+            ) && (
+                (req.query.cash == "false" &&
+                req.query.credit_card.length >= 14 && req.query.credit_card.length < 19 &&
+                req.query.ccv.length == 3)
+            ||
+                req.query.cash == "true"
+            ) &&
+            req.query.name.length >= 1 &&
+            parseInt(req.query.id) < 2**31
+        ){
+            const query = `INSERT INTO "Orders" (
+                id,
+                ready_by,
+                delivery,
+                address,
+                postcode,
+                cash,
+                name,
+                credit_card,
+                ccv)
+            VALUES (
+                ${req.query.id},
+                '${new Date(parseFloat(req.query.ready_by)).toISOString()}',
+                '${req.query.delivery}',
+                '${req.query.address}',
+                '${req.query.postcode}',
+                '${req.query.cash}',
+                '${req.query.name}',
+                '${req.query.credit_card}',
+                '${req.query.ccv}'
+            );`
+            console.log(query);
+            makeQuery(query, x=>res.send(x))
+        }else{
+            res.send("error, incorrect data")
+        }
+    }catch(err){
+        res.send("error, invaid data")
+    }
+})
 
-// app.post("/create-pizza", (req, res)=>{
-    
-// })
+app.get("/create-pizza", (req, res)=>{
+    try{
+        if(
+            parseInt(req.query.order_id) &&
+            parseInt(req.query.quantity)
+
+        ){
+            const query = `INSERT INTO "OrderItems" (
+                order_id,
+                ingredients,
+                quantity)
+            VALUES (
+                ${parseInt(req.query.order_id)},
+                '${req.query.ingredients}',
+                ${parseInt(req.query.quantity)}
+            );`
+            console.log(query);
+            makeQuery(query, x=>res.send(x))
+        }else{
+            res.send("error, incorrect data")
+        }
+    }catch(err){
+        res.send("error, invaid data")
+    }
+})
 
 app.get("/query", (req, res)=>{
     res.sendFile('query.html', {root: __dirname })
 })
 app.get("/_query", (req, res)=>{
-    console.log(req.query.q, req.query.p);
-    if(req.query.q && req.query.p == "1234"){
-        makeQuery(req.query.q, x=>res.send(x))
+    try{
+        console.log(req.query.q, req.query.p);
+        if(req.query.q && req.query.p == "1234"){
+            makeQuery(req.query.q, x=>res.send(x))
+        }
+    }catch(err){
+        res.send(err)
     }
 })
 

@@ -2,10 +2,10 @@ import "../common/common.css"
 
 function Validate(props){
     return (
-        <span>
+        <div>
             {props.children}
             {props.valid?null:<span className="red noselect">*{props.text||""}</span>}
-        </span>
+        </div>
     )
 }
 

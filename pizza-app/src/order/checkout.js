@@ -1,5 +1,5 @@
 import React from "react";
-import { database, OrderRecord } from '../common/database.js';
+import { database, OrderRecord, database_url } from '../common/database.js';
 import Validate from "./validateWrapper";
 import { sum } from "../common/utils"
 
@@ -73,7 +73,7 @@ function Delivery(props){
             <input type="checkbox" id="delivery-checkbox" value={props.delivery} onChange={props.setDelivery}></input>
         </label>
         <br />
-        <Validate valid={props.ready.toISOString()>getDate().toISOString()} text="Date to early">
+        <Validate valid={props.ready.toISOString()>getDate().toISOString()} text="Date too early">
             <label>
                 {props.delivery?"Arrive at ":"Pickup ready at "}
                 <input type="datetime-local" min={dateToString(minDate)} value={dateToString(props.ready)} onChange={props.setReadyBy}></input>
@@ -105,7 +105,7 @@ function dateToString(dateObj){
     return dateObj.toISOString().substring(0, 16)
 }
 
-
+const order_id = Math.random()*2**31
 
 export function Checkout(props){
     const [ readyBy, setReadyBy ] = React.useState(getDate(20))
@@ -116,6 +116,8 @@ export function Checkout(props){
     const [ name, setName ] = React.useState("")
     const [ ccNum, setCcNum ] = React.useState("")
     const [ ccv, setCcv ] = React.useState("")
+
+    const [ addStatus, setAddStatus ] = React.useState("")
 
     ///////// ONCHANGE HANDLERS //////////
     // mostly just sets state to the value
@@ -138,20 +140,25 @@ export function Checkout(props){
 
     //////////// HANDLE SUBMIT /////////////
     const handleCreateOrder = ()=>{
-        database.addRecord(new OrderRecord(props.pizzas, 0, name, cash?"cash":"card", total))
-        console.log(database.records)
+        database.addOrder(
+            new OrderRecord(order_id, readyBy, delivery, address, postcode, cash, name, ccNum, ccv),
+            res=>{console.log("added order, res:"); console.log(res); sendPizzas()}
+        )
     }
+    const sendPizzas = ()=>{
+        for(const pizza of props.pizzas){
+            database.addPizza(pizza, order_id)
+        }
+    }
+    const addedSuccessCallback = (res)=>{console.log(res);setAddr("success!")}
 
     // checks if all inputs are valid
     const validateInput = ()=>{
-        if(name.length > 0 &&
-            cash &&
-            postcode.length == 4 &&
-            address.length > 0 &&
-            suburb.length > 0){
-            return true
-        }
-        return false
+        return (name.length > 0 &&
+            (cash || (ccv.length == 3 && ccNum.length >= 14)) &&
+            ((!delivery) || (postcode.length == 4 && address.length > 0)) &&
+            readyBy instanceof Date && readyBy > getDate() &&
+            props.pizzas.length > 0)
     }
 
     return (
@@ -171,6 +178,8 @@ export function Checkout(props){
                 ready={readyBy} setReadyBy={handleReadyByChange}
             />
             <button type="button" onClick={handleCreateOrder} disabled={!validateInput()}>Order</button>
+            <br />
+            {addStatus}
         </div>
     )
 }

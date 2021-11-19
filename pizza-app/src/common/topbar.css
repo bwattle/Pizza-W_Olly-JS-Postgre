@@ -7,5 +7,5 @@ header{
     height: 8vh;
     background-color: #ddd;
     display: flex;
-    flex-direction: row-reverse;
+    /* flex-direction: row-reverse; */
 }

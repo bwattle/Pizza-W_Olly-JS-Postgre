@@ -15,8 +15,7 @@ Output:
     const outputEl = document.getElementById("output");
 
     submitEl.onclick = ()=>{
-        const queryString = new URLSearchParams(["q", inputEl.value], ["p", passEl.value]).toString()
-        console.log(queryValue, passValue);
+        const queryString = new URLSearchParams([["q", inputEl.value], ["p", passEl.value]]).toString()
 
         function reqListener () {
             console.log(this.responseText);
@@ -25,7 +24,7 @@ Output:
 
         var req = new XMLHttpRequest();
         req.addEventListener("load", reqListener);
-        req.open("GET", `/_query/?q=${queryValue}&p=${passValue}`);
+        req.open("GET", `/_query/?${queryString}`);
         req.send();
     }
 </script>

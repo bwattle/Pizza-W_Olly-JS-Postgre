@@ -1,7 +1,6 @@
 .pizza-creator-close{
-    /* background-color: #444; */
-    /* transition: transform 0.4s; */
     transform: scale(2);
+    text-shadow: 0px 0px 1px #aaa;
 }
 .pizza-creator-close:hover{
     transform: scale(2.5);
@@ -39,6 +38,9 @@
     /* background-color: #ddd; */
     box-shadow: 1px 1px 3px #ccc, -1px -1.5px 3px #fff;
     transform: translate(0px, 0px);
+}
+.ingredient-item:active{
+    background-color: #d5d5d5;
 }
 /* .ingCheck:checked + div{ */
 .ing-item-checked{

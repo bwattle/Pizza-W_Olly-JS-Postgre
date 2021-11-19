@@ -6,7 +6,7 @@ CREATE TABLE "OrderItems" (
 );
 
 CREATE TABLE "Orders" (
-  "id" SERIAL PRIMARY KEY,
+  "id" int PRIMARY KEY,
   "ready_by" timestamp,
   "delivery" boolean,
   "address" varchar,

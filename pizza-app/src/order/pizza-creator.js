@@ -2,6 +2,7 @@ import { Pizza } from "../common/database"
 import React from "react";
 import Validate from "./validateWrapper"
 import { allIngredients } from "../common/database";
+import { arraysEqual } from "../common/utils"
 
 import "./pizza-creator.css";
 
@@ -11,20 +12,25 @@ const presets = {
     "Cheese": ["cheese"],
     "Meatlovers": ["cheese", "beef", "ham", "pep", "onion"],
     "Hawaiian": ["cheese", "tomato", "ham"],
+    "Vegetarian": ["cheese", "tomato", "mushroom", "spinach", "onion", "olive"]
 }
 
 function PresetSelect(props) {
-    const [lastPreset, setLastPreset] = React.useState("None");
-
     const handleChange = (event) => {
-        setLastPreset(event.target.value);
         props.setIngs(presets[event.target.value]);
-    };
+    }
+
+    let selectedPreset = "None"
+    for(const preset of Object.keys(presets)){
+        if(arraysEqual(presets[preset], props.ings)){
+            selectedPreset = preset
+        }
+    }
 
     return (
         <div>
             <label htmlFor="preset">Select preset: </label>
-            <select value={lastPreset} onChange={handleChange} name="preset" id="preset-selector">
+            <select value={selectedPreset} onChange={handleChange} name="preset" id="preset-selector">
                 {Object.keys(presets).map((key, idx)=>{
                     return (
                         <option key={idx} value={key}>{key}</option>
@@ -42,7 +48,7 @@ const Ingredient = (props)=>{
         <label >
             <input
                 className="ingCheck" type="checkbox" hidden
-                value={props.selected} onChange={e=>{props.onClick(props.ing, e.target.checked)}}
+                value={props.selected} onChange={e=>{props.onClick(props.ing, props.selected)}}
             ></input>
             <div className={`ingredient-item${props.selected?" ing-item-checked":""}`}>
                 <span className="noselect">{allIngredients[props.ing].name}  ${allIngredients[props.ing].price}</span>
@@ -59,17 +65,17 @@ const PizzaCreator = (props) => {
 
     const handleAmountChange = (event)=>{
         const quant = event.target.value
-        props.setPizza(new Pizza(props.pizza.ingredients, quant, props.pizza.id))
+        props.setPizza(new Pizza(props.pizza.ingredients, quant))
     }
 
     const setIngredients = (ingredients) => {
-        props.setPizza(new Pizza(ingredients, props.pizza.quantity, props.pizza.id))
+        props.setPizza(new Pizza(ingredients, props.pizza.quantity))
     }
 
     // on click handlers
     const handleIngChange = (ing, val)=>{
         let newIngs;
-        if(val){
+        if(!val){
             // concat new ing to end
             newIngs = props.pizza.ingredients.concat([ing])
         }else{
@@ -93,7 +99,7 @@ const PizzaCreator = (props) => {
             
             <div className="creator-content">
                 
-                <PresetSelect setIngs={setIngredients} />
+                <PresetSelect setIngs={setIngredients} ings={props.pizza.ingredients} />
 
                 <Validate valid={!props.pizza.ingredients.includes("pineapple")} text="Thats gross">
                     <div id="ingredients-selector">
