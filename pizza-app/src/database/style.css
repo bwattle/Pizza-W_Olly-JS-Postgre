@@ -2,7 +2,12 @@ table, th, td {
     border: 1px solid black;
     border-collapse: collapse;
 }
-tr:nth-child(even) {background-color: #eee;}
+tr:hover{
+    background-color: #bbb;
+}
 #tables-div{
     padding: 50px;
+}
+.row-hovered{
+    background-color: #ddd;
 }

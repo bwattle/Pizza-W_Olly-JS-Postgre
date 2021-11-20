@@ -20,26 +20,6 @@ const pool = new Pool({
     }
 })
 
-// creates tables from schema.sql
-function createTables(){
-    const data = fs.readFileSync('./schema.sql', 'utf8')
-    console.log("trying to create tables")
-    pool.query(data, (err, res)=>{
-        if(err){
-            console.log("error creating tables");
-            console.log(err);
-        }else{
-            console.log("successfully created tables");
-            console.log(res);
-        }
-    })
-}
-
-/**
- * 
- * @param {string} query sql query
- * @param {*} reqRes respose to send to once done
- */
 function makeQuery(query, callback){
     pool.query(query, (err, result) => {
         if (err) {
@@ -71,31 +51,6 @@ app.get("/list-orders", (req, res)=>{
 app.get("/list-pizzas", (req, res)=>{
     console.log("list pizzas");
     makeQuery(`SELECT * FROM "OrderItems"`, x=>res.send(x))
-})
-
-app.get("/order-fields", (req, res)=>{
-    console.log("list order fields");
-    makeQuery(
-        `SELECT
-            column_name,
-            data_type
-        FROM
-            information_schema.columns
-        WHERE
-            table_name = 'Orders';`,
-     x=>res.send(x.rows))
-})
-app.get("/pizza-fields", (req, res)=>{
-    console.log("list pizza fields");
-    makeQuery(
-        `SELECT
-            column_name,
-            data_type
-        FROM
-            information_schema.columns
-        WHERE
-            table_name = 'OrdersItems';`,
-     x=>res.send(x.rows))
 })
 
 app.get("/create-order", (req, res)=>{
@@ -195,15 +150,6 @@ DROP TABLE OrderItems;
 DROP TABLE Orders;
 */
 
-// app.get("/create-tables", (req, res)=>{
-//     if(req.query.pass == "123456789"){
-//         console.log("creating tables");
-//         createTables();
-//         res.send("attempted making tables")
-//     }else{
-//         res.send(`Password incorrect, given password: ${JSON.stringify(req.query.pass)}`)
-//     }
-// })
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
