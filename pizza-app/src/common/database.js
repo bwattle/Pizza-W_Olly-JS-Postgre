@@ -61,6 +61,9 @@ class Database{
     getOrders(callback){
         httpGetAsync(`${database_url}/list-orders`, res=>callback(JSON.parse(res)))
     }
+    getId(callback){
+        httpGetAsync(`${database_url}/get-id`, res=>callback(parseInt(res)))
+    }
 }
 
 class OrderRecord {

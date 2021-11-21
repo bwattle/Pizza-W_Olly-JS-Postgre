@@ -121,13 +121,12 @@ function dateToString(dateObj){
     return dateObj.toISOString().substring(0, 16)
 }
 
-const order_id = Math.random()*2**31
 
 export class Checkout extends React.Component{
     
     constructor(props){
         super(props);
-        this.state = new OrderRecord(order_id, getDate(20), true, "", "", false, "", "", "")
+        this.state = {...new OrderRecord(-1, getDate(20), true, "", "", false, "", "", ""), feedback: ""}
     }
 
     render(){
@@ -155,17 +154,29 @@ export class Checkout extends React.Component{
 
         //////////// HANDLE SUBMIT /////////////
         const handleCreateOrder = ()=>{
+            database.getId(createOrder)
+        }
+        const createOrder = order_id=>{
+            const order = Object.assign(new OrderRecord, this.state)
+            order.id = order_id
+            console.log("got id ", order_id);
             database.addOrder(
-                Object.assign(new OrderRecord, this.state),
-                res=>{console.log("added order, res:"); console.log(res); sendPizzas()}
+                order,
+                res=>{
+                    console.log("added order, res:", res);
+                    this.setState({feedback: this.state.feedback+"\nAdded order "+res});
+                    sendPizzas(order_id)
+                }
             )
         }
-        const sendPizzas = ()=>{
+        const sendPizzas = order_id=>{
             for(const pizza of this.props.pizzas){
-                database.addPizza(pizza, order_id)
+                database.addPizza(pizza, order_id, res=>{
+                    console.log("added pizza, res:",res);
+                    this.setState({feedback: this.state.feedback+"<br />Added pizza "+res})
+                })
             }
         }
-        const addedSuccessCallback = (res)=>{console.log(res);setAddr("success!")}
 
         // checks if all inputs are valid
         const validateInput = ()=>{

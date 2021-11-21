@@ -84,18 +84,27 @@ app.get("/create-order", (req, res)=>{
                 credit_card,
                 ccv)
             VALUES (
-                ${req.query.id},
-                '${new Date(parseFloat(req.query.ready_by)).toISOString()}',
-                '${req.query.delivery}',
-                '${req.query.address}',
-                '${req.query.postcode}',
-                '${req.query.cash}',
-                '${req.query.name}',
-                '${req.query.credit_card}',
-                '${req.query.ccv}'
+                $1,$2,$3,$4,$5,$6,$7,$8,$9
             );`
-            console.log(query);
-            makeQuery(query, x=>res.send(x))
+            const values = [
+                req.query.id,
+                new Date(parseFloat(req.query.ready_by)),
+                req.query.delivery,
+                req.query.address,
+                req.query.postcode,
+                req.query.cash,
+                req.query.name,
+                req.query.credit_card,
+                req.query.ccv,
+            ]
+            pool.query(query, values, (err, result) => {
+                if (err) {
+                    console.error('Error executing query', err.stack)
+                    res.send(err.stack)
+                }
+                res.send(result)
+            })
+
         }else{
             res.send("error, incorrect data")
         }
@@ -116,12 +125,21 @@ app.get("/create-pizza", (req, res)=>{
                 ingredients,
                 quantity)
             VALUES (
-                ${parseInt(req.query.order_id)},
-                '${req.query.ingredients}',
-                ${parseInt(req.query.quantity)}
+                $1,$2,$3
             );`
+            const values = [
+                parseInt(req.query.order_id),
+                req.query.ingredients,
+                parseInt(req.query.quantity)
+            ]
             console.log(query);
-            makeQuery(query, x=>res.send(x))
+            pool.query(query, values, (err, result) => {
+                if (err) {
+                    console.error('Error executing query', err.stack)
+                    res.send(err.stack)
+                }
+                res.send(result)
+            })
         }else{
             res.send("error, incorrect data")
         }
@@ -144,10 +162,22 @@ app.get("/_query", (req, res)=>{
     }
 })
 
+app.get("/get-id", (req, res)=>{
+    makeQuery(`SELECT MAX(id) AS FirstId
+    FROM "Orders";`, (sqlRes)=>{
+        let giveId = parseInt(sqlRes.rows[0].firstid)+1
+        if(giveId.toString() == "NaN"){
+            giveId = 0
+        }
+        console.log(new Date().toISOString()+" : gave out id "+giveId);
+        res.send(giveId.toString())
+    });
+})
+
 /*
 clean:
-DROP TABLE OrderItems;
-DROP TABLE Orders;
+DROP TABLE "OrderItems";
+DROP TABLE "Orders";
 */
 
 
