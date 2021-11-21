@@ -17,7 +17,7 @@
     padding: 30px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    /* align-items: center; */
 }
 
 thead, th, tr, td{

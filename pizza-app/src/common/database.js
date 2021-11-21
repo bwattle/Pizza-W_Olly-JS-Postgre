@@ -75,10 +75,6 @@ class OrderRecord {
         this.name = name;
         this.credit_card = credit_card;
         this.ccv = ccv;
-
-        if(!this.validate()){
-            throw "Invaid OrderRecord"
-        }
     }
 
     // make sure all the data is in the correct format

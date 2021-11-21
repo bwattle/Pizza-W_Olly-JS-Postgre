@@ -2,11 +2,13 @@ import React from "react";
 import { database, OrderRecord, database_url } from '../common/database.js';
 import Validate from "./validateWrapper";
 import { sum } from "../common/utils"
+import DatePicker from "react-datepicker";
 
+import "react-datepicker/dist/react-datepicker.css";
 import "./checkout.css"
 
 function Name(props){
-    return (<Validate valid={props.name.length>1}>
+    return (<Validate valid={props.name.length>=1}>
         <label htmlFor="fname">First name:</label>
         <input type="text" id="fname" name="name" value={props.name} onChange={props.setName}></input>
     </Validate>)
@@ -49,7 +51,12 @@ function Payment(props){
 
 
 function Delivery(props){
-    const minDate = getDate()
+    const filterPassedTime = (time) => {
+        const currentDate = new Date();
+        const selectedDate = new Date(time);
+
+        return currentDate.getTime() < selectedDate.getTime();
+    };
 
     const addressPicker = (
         <div>
@@ -70,13 +77,22 @@ function Delivery(props){
     return <div>
         <label>
             Delivery?
-            <input type="checkbox" id="delivery-checkbox" value={props.delivery} onChange={props.setDelivery}></input>
+            <input type="checkbox" id="delivery-checkbox" checked={props.delivery} onChange={props.setDelivery}></input>
         </label>
         <br />
         <Validate valid={props.ready.toISOString()>getDate().toISOString()} text="Date too early">
             <label>
                 {props.delivery?"Arrive at ":"Pickup ready at "}
-                <input type="datetime-local" min={dateToString(minDate)} value={dateToString(props.ready)} onChange={props.setReadyBy}></input>
+                {/* <input type="datetime-local" min={dateToString(minDate)} value={dateToString(props.ready)} onChange={props.setReadyBy}></input> */}
+                <DatePicker
+                    selected={props.ready}
+                    onChange={props.setReadyBy}
+                    showTimeSelect
+                    filterTime={filterPassedTime}
+                    minDate={new Date()}
+                    timeIntervals={5}
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                />
             </label>
         </Validate>
         <br />
@@ -107,81 +123,80 @@ function dateToString(dateObj){
 
 const order_id = Math.random()*2**31
 
-export function Checkout(props){
-    const [ readyBy, setReadyBy ] = React.useState(getDate(20))
-    const [ delivery, setDelivery ] = React.useState(false)
-    const [ address, setAddress ] = React.useState("");
-    const [ postcode, setPostcode ] = React.useState("")
-    const [ cash, setCash ] = React.useState(false)
-    const [ name, setName ] = React.useState("")
-    const [ ccNum, setCcNum ] = React.useState("")
-    const [ ccv, setCcv ] = React.useState("")
+export class Checkout extends React.Component{
+    
+    constructor(props){
+        super(props);
+        this.state = new OrderRecord(order_id, getDate(20), true, "", "", false, "", "", "")
+    }
 
-    const [ addStatus, setAddStatus ] = React.useState("")
+    render(){
 
-    ///////// ONCHANGE HANDLERS //////////
-    // mostly just sets state to the value
-    const handleCashChange = e=>setCash(e.target.checked)
-    const handleAddrChange = e=>setAddress(e.target.value)
-    const handleDeliveryChange = e=>setDelivery(e.target.checked)
-    // name dosent allow numbers
-    const handleNameChange = e=>setName(filterNumbers(e.target.value))
-    // postcode dosent letters
-    const handlePostChange = e=>setPostcode(filterLetters(e.target.value).substring(0, 4))
-    const handleCcvChange = e=>setCcv(filterLetters(e.target.value).substring(0, 3))
-    const handleCcNumChange = e=>setCcNum(filterLetters(e.target.value).substring(0, 16)) 
-    const handleReadyByChange = e=>{console.log(new Date(e.target.value));setReadyBy(new Date(e.target.value))}
+        ///////// ONCHANGE HANDLERS //////////
+        // mostly just sets state to the value
+        const handleCashChange = e=>this.setState({cash: e.target.checked})
+        const handleAddrChange = e=>this.setState({address: e.target.value})
+        const handleDeliveryChange = e=>this.setState({delivery: e.target.checked})
+        // name dosent allow numbers
+        const handleNameChange = e=>this.setState({name: filterNumbers(e.target.value)})
+        // postcode dosent allow letters
+        const handlePostChange = e=>this.setState({postcode: filterLetters(e.target.value).substring(0, 4)})
+        const handleCcvChange = e=>this.setState({ccv: filterLetters(e.target.value).substring(0, 3)})
+        const handleCcNumChange = e=>this.setState({credit_card: filterLetters(e.target.value).substring(0, 16)}) 
+        const handleReadyByChange = date=>{
+            console.log(date, date.toISOString());this.setState({ready_by: date})
+        }
 
-    //////////// CALCULATE TOTAL /////////////
-    const prices = props.pizzas.map(
-        pizza=>pizza.getPrice()
-    )
-    const total = sum(prices)
+        //////////// CALCULATE TOTAL /////////////
+        const prices = this.props.pizzas.map(
+            pizza=>pizza.getPrice()
+        )
+        const total = sum(prices)
 
-    //////////// HANDLE SUBMIT /////////////
-    const handleCreateOrder = ()=>{
-        database.addOrder(
-            new OrderRecord(order_id, readyBy, delivery, address, postcode, cash, name, ccNum, ccv),
-            res=>{console.log("added order, res:"); console.log(res); sendPizzas()}
+        //////////// HANDLE SUBMIT /////////////
+        const handleCreateOrder = ()=>{
+            database.addOrder(
+                Object.assign(new OrderRecord, this.state),
+                res=>{console.log("added order, res:"); console.log(res); sendPizzas()}
+            )
+        }
+        const sendPizzas = ()=>{
+            for(const pizza of this.props.pizzas){
+                database.addPizza(pizza, order_id)
+            }
+        }
+        const addedSuccessCallback = (res)=>{console.log(res);setAddr("success!")}
+
+        // checks if all inputs are valid
+        const validateInput = ()=>{
+            return Object.assign(new OrderRecord(), this.state).validate() && this.props.pizzas.length >= 1
+        }
+    
+        return (
+            <div id="price-outer">
+                Total: ${total}
+                <h4>Customer Details</h4>
+                <Name name={this.state.name} setName={handleNameChange} />
+                <Payment
+                    cash={this.state.cash} setCash={handleCashChange} ccNum={this.state.credit_card}
+                    setCcNum={handleCcNumChange} ccv={this.state.ccv} setCcv={handleCcvChange}
+                />
+                <h4>Delivery Details</h4>
+                <Delivery
+                    postcode={this.state.postcode} setPost={handlePostChange}
+                    address={this.state.address} setAddr={handleAddrChange}
+                    delivery={this.state.delivery} setDelivery={handleDeliveryChange}
+                    ready={this.state.ready_by} setReadyBy={handleReadyByChange}
+                />
+                <br />
+                <Validate valid={this.props.pizzas.length>=1} text="Must have at least one pizza">
+                    <button type="button" onClick={handleCreateOrder} disabled={!validateInput()}>Order</button>
+                </Validate>
+                <br />
+                {this.state.feedback}
+            </div>
         )
     }
-    const sendPizzas = ()=>{
-        for(const pizza of props.pizzas){
-            database.addPizza(pizza, order_id)
-        }
-    }
-    const addedSuccessCallback = (res)=>{console.log(res);setAddr("success!")}
-
-    // checks if all inputs are valid
-    const validateInput = ()=>{
-        return (name.length > 0 &&
-            (cash || (ccv.length == 3 && ccNum.length >= 14)) &&
-            ((!delivery) || (postcode.length == 4 && address.length > 0)) &&
-            readyBy instanceof Date && readyBy > getDate() &&
-            props.pizzas.length > 0)
-    }
-
-    return (
-        <div id="price-outer">
-            Total: ${total}
-            <h4>Customer Details</h4>
-            <Name name={name} setName={handleNameChange} />
-            <Payment
-                cash={cash} setCash={handleCashChange} ccNum={ccNum}
-                setCcNum={handleCcNumChange} ccv={ccv} setCcv={handleCcvChange}
-            />
-            <h4>Delivery Details</h4>
-            <Delivery
-                postcode={postcode} setPost={handlePostChange}
-                address={address} setAddr={handleAddrChange}
-                delivery={delivery} setDelivery={handleDeliveryChange}
-                ready={readyBy} setReadyBy={handleReadyByChange}
-            />
-            <button type="button" onClick={handleCreateOrder} disabled={!validateInput()}>Order</button>
-            <br />
-            {addStatus}
-        </div>
-    )
 }
 
 export default Checkout;

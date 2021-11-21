@@ -14,7 +14,6 @@
 
 .pizza-creator-outer{
     border: 1px solid black;
-    /* width: 90vw; */
     padding: 2vw;
     display: flex;
     flex-direction: column;
@@ -35,14 +34,9 @@
     border-radius: 10px;
 }
 .ingredient-item:hover{
-    /* background-color: #ddd; */
     box-shadow: 1px 1px 3px #ccc, -1px -1.5px 3px #fff;
     transform: translate(0px, 0px);
 }
-.ingredient-item:active{
-    background-color: #d5d5d5;
-}
-/* .ingCheck:checked + div{ */
 .ing-item-checked{
     box-shadow: inset 2px 3px 3px #ccc, inset -2px -3px 3px #fff !important;
     transform: translate(1px, 1.5px) !important;
@@ -53,7 +47,6 @@
 #ingredients-selector{
     display: flex;
     flex-wrap: wrap;
-    /* flex-wrap: wrap; */
     justify-content: center;
     padding: 10px;
     border-radius: 5px;

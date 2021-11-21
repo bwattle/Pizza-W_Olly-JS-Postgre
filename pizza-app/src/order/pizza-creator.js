@@ -22,7 +22,7 @@ function PresetSelect(props) {
 
     let selectedPreset = "None"
     for(const preset of Object.keys(presets)){
-        if(arraysEqual(presets[preset], props.ings)){
+        if(arraysEqual(presets[preset].sort(), props.ings.sort())){
             selectedPreset = preset
         }
     }
