@@ -112,7 +112,7 @@ function filterNumbers(v){
 
 // filters out letters
 function filterLetters(v){
-    return v.replaceAll(/\D+/g) // matches all non numbers
+    return v.replaceAll(/\D+/g, "") // matches all non numbers
 }
 
 function getDate(plusMins=5){
@@ -153,7 +153,9 @@ export class Checkout extends React.Component{
         //////////// HANDLE SUBMIT /////////////
         const handleCreateOrder = ()=>{
             database.getId(createOrder)
+            this.setState({feedback: [...this.state.feedback, {text:"Loading...", status:true}]})
         }
+        // callback after getting id
         const createOrder = order_id=>{
             const order = Object.assign(new OrderRecord, this.state)
             order.id = order_id
@@ -167,11 +169,8 @@ export class Checkout extends React.Component{
                     }else{
                         this.setState({feedback: [...this.state.feedback, {text:`Failed to add order: ${res}`, status:false}]})
                     }
-                    sendPizzas(order_id)
                 }
             )
-        }
-        const sendPizzas = order_id=>{
             for(const pizza of this.props.pizzas){
                 database.addPizza(pizza, order_id, res=>{
                     console.log("added pizza, res:",res);

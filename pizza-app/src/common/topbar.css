@@ -9,3 +9,19 @@ header{
     display: flex;
     /* flex-direction: row-reverse; */
 }
+a{
+    background-color: #ddd;
+    border: 1px solid #aaa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: black;
+    padding: 20px;
+}
+a:hover{
+    background-color: #aaa;
+}
+a:active{
+    background-color: #999;
+}
