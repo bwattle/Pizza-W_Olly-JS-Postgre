@@ -1,6 +1,6 @@
 # sdd-pizza
 
-You can find the frontend [here](https://peaceful-clarke-e20298.netlify.app/) and the backend [here](https://pizza-db.herokuapp.com/query)
+You can find the frontend [here](https://sdd-pizza.netlify.app/) (dosent work on school wifi) and the backend [here](https://pizza-db.herokuapp.com/query)
 
 pizza thing for software class
 
