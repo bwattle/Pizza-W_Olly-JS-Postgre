@@ -185,7 +185,11 @@ export class Checkout extends React.Component{
 
         // checks if all inputs are valid
         const validateInput = ()=>{
-            return Object.assign(new OrderRecord(), this.state).validate() && this.props.pizzas.length >= 1
+            return (
+                Object.assign(new OrderRecord(), this.state).validate() &&
+                this.props.pizzas.length >= 1 &&
+                this.state.feedback.length == 0
+            )
         }
         return (
             <div id="price-outer">
@@ -204,11 +208,14 @@ export class Checkout extends React.Component{
                     ready={this.state.ready_by} setReadyBy={handleReadyByChange}
                 />
                 <br />
-                <Validate valid={this.props.pizzas.length>=1} text="Must have at least one pizza">
-                    <button type="button" onClick={handleCreateOrder} disabled={!validateInput()}>Order</button>
+                <Validate valid={this.state.feedback.length==0} text="Submitted, check below for comfirmation">
+                    <Validate valid={this.props.pizzas.length>=1} text="Must have at least one pizza">
+                        <button onClick={handleCreateOrder} disabled={!validateInput()}>Order</button>
+                    </Validate>
                 </Validate>
                 <br />
-                {this.state.feedback.map(obj=>{return <p className={obj.status?"green":"red"}>{obj.text}</p>})}
+                {this.state.feedback.map((obj, idx)=>{return <p key={idx} className={obj.status?"green":"red"}>{obj.text}</p>})}
+                {this.state.feedback.length==0?null:<button onClick={_=>location.reload()}>New order</button>}
             </div>
         )
     }

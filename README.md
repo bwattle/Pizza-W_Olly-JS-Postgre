@@ -11,3 +11,7 @@ Uses parcel to bundle my javascript and library javascript together into a singl
 run `npm ci` in pizza-app/ to install dependancies
 
 after that run `npx parcel src/index.html` in pizza-app/ to run development server locally
+
+Known issues
+ - database filter dosent lowercase input
+ - Negative signs (hyphens) break credit card input
