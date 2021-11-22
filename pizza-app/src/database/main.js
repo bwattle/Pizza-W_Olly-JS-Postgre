@@ -13,8 +13,17 @@ function Table(props){
         return <div>Loading...</div>
     }
 
-    // const fieldsTypes = props.res.fields.map(val=>getKeyByValue(props.res._types._types.builtins, val.dataTypeId))
-    const rows = props.res.rows
+    function checkRow(row, text){
+        return Object.values(row).some(x=>x.toString().toLowerCase().includes(text))
+    }
+
+    let rows;
+    if(props.filter.length > 1){
+        rows = props.res.rows.filter(row=>checkRow(row, props.filter))
+    }else{
+        rows = props.res.rows
+    }
+
     const fields = props.res.fields
     const colWidths = fields.map(field=>field.name.length) // create array 0's with length of fields
     for(const row of props.res.rows){
@@ -48,6 +57,11 @@ function App(){
     const [ orders, setOrders ] = React.useState("loading...")
     const [ pizzas, setPizzas ] = React.useState("loading...")
     const [ hovering, setHovering ] = React.useState(-1)
+    const [ filter, setFilter ] = React.useState("")
+
+    const handleFilterChange = event=>{
+        setFilter(event.target.value)
+    }
 
     React.useEffect(()=>{
         database.getOrders((res)=>{
@@ -60,11 +74,16 @@ function App(){
 
     return (
         <div id="tables-div">
+            <label>
+                Filter: 
+                <input type="text" value={filter} onChange={handleFilterChange} ></input>
+            </label>
+            <br /><br />
             Pizzas
-            <Table res={pizzas} hover_name="order_id" hover_id={hovering} setHover={setHovering} />
+            <Table res={pizzas} hover_name="order_id" hover_id={hovering} setHover={setHovering} filter={filter} />
             <br />
             Orders
-            <Table res={orders} hover_name="id" hover_id={hovering} setHover={setHovering} />
+            <Table res={orders} hover_name="id" hover_id={hovering} setHover={setHovering} filter={filter} />
         </div>
     )
 }
