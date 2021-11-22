@@ -56,10 +56,14 @@ class Database{
         httpGetAsync(url, callback)
     }
     getPizzas(callback){
-        httpGetAsync(`${database_url}/list-pizzas`, res=>callback(JSON.parse(res)))
+        httpGetAsync(`${database_url}/list-pizzas`, res=>{
+            try{callback(JSON.parse(res))}
+            catch(e){callback(res)}})
     }
     getOrders(callback){
-        httpGetAsync(`${database_url}/list-orders`, res=>callback(JSON.parse(res)))
+        httpGetAsync(`${database_url}/list-orders`, res=>{
+            try{callback(JSON.parse(res))}
+            catch(e){callback(res)}})
     }
     getId(callback){
         httpGetAsync(`${database_url}/get-id`, res=>callback(parseInt(res)))

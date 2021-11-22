@@ -100,7 +100,7 @@ app.get("/create-order", (req, res)=>{
             pool.query(query, values, (err, result) => {
                 if (err) {
                     console.error('Error executing query', err.stack)
-                    res.send(err.stack)
+                    res.send("error, "+err.stack)
                 }
                 res.send(result)
             })
@@ -136,7 +136,7 @@ app.get("/create-pizza", (req, res)=>{
             pool.query(query, values, (err, result) => {
                 if (err) {
                     console.error('Error executing query', err.stack)
-                    res.send(err.stack)
+                    res.send("error, "+err.stack)
                 }
                 res.send(result)
             })

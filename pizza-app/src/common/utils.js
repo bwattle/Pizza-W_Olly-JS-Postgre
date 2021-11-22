@@ -26,6 +26,10 @@ export function httpGetAsync(theUrl, callback)
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
             callback(xmlHttp.responseText);
     }
+    xmlHttp.onerror = function(e){
+        console.log(e)
+        callback(`error, ${e.toString()}`)
+    };
     xmlHttp.open("GET", theUrl, true); // true for asynchronous 
     xmlHttp.send(null);
 }

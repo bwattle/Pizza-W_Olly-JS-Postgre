@@ -16,3 +16,12 @@
     padding: 0;
     overflow-x: hidden;
 }
+
+.red{
+    color: #d45;
+    padding-left: 5px;
+}
+.green{
+    color: #0b1;
+    padding-left: 5px;
+}

@@ -6,6 +6,7 @@ import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "./checkout.css"
+import "../common/common.css"
 
 function Name(props){
     return (<Validate valid={props.name.length>=1}>
@@ -117,16 +118,13 @@ function filterLetters(v){
 function getDate(plusMins=5){
     return new Date(new Date().getTime() + 1000*60*plusMins)
 }
-function dateToString(dateObj){
-    return dateObj.toISOString().substring(0, 16)
-}
 
 
 export class Checkout extends React.Component{
     
     constructor(props){
         super(props);
-        this.state = {...new OrderRecord(-1, getDate(20), true, "", "", false, "", "", ""), feedback: ""}
+        this.state = {...new OrderRecord(-1, getDate(20), true, "", "", false, "", "", ""), feedback: []}
     }
 
     render(){
@@ -164,7 +162,11 @@ export class Checkout extends React.Component{
                 order,
                 res=>{
                     console.log("added order, res:", res);
-                    this.setState({feedback: this.state.feedback+"\nAdded order "+res});
+                    if(!res.startsWith("error")){
+                        this.setState({feedback: [...this.state.feedback, {text:"Added order ", status:true}]})
+                    }else{
+                        this.setState({feedback: [...this.state.feedback, {text:`Failed to add order: ${res}`, status:false}]})
+                    }
                     sendPizzas(order_id)
                 }
             )
@@ -173,7 +175,11 @@ export class Checkout extends React.Component{
             for(const pizza of this.props.pizzas){
                 database.addPizza(pizza, order_id, res=>{
                     console.log("added pizza, res:",res);
-                    this.setState({feedback: this.state.feedback+"<br />Added pizza "+res})
+                    if(!res.startsWith("error")){
+                        this.setState({feedback: [...this.state.feedback, {text:"Added pizza", status:true}]})
+                    }else{
+                        this.setState({feedback: [...this.state.feedback, {text:`Failed to add pizza: ${res}`, status:false}]})
+                    }
                 })
             }
         }
@@ -182,7 +188,6 @@ export class Checkout extends React.Component{
         const validateInput = ()=>{
             return Object.assign(new OrderRecord(), this.state).validate() && this.props.pizzas.length >= 1
         }
-    
         return (
             <div id="price-outer">
                 Total: ${total}
@@ -204,7 +209,7 @@ export class Checkout extends React.Component{
                     <button type="button" onClick={handleCreateOrder} disabled={!validateInput()}>Order</button>
                 </Validate>
                 <br />
-                {this.state.feedback}
+                {this.state.feedback.map(obj=>{return <p className={obj.status?"green":"red"}>{obj.text}</p>})}
             </div>
         )
     }

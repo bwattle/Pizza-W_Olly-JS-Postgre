@@ -9,7 +9,7 @@ import "./style.css"
 
 
 function Table(props){
-    if(props.res == "loading..."){
+    if(!props.res.fields){
         return <div>Loading...</div>
     }
 
