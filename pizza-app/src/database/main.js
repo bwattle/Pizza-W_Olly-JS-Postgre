@@ -48,7 +48,7 @@ function Table(props){
 
     const fields = props.res.fields
     // find the maxium width of each field to set table widths
-    const colWidths = fields.map(field=>field.name.length) // create array 0's with length of fields
+    const colWidths = fields.map(field=>field.name.length+2) // initialize min-widths to length of title
     for(const row of props.res.rows){
         for(let i=0; i<fields.length; i++){
             const key = Object.keys(row)[i];
@@ -59,7 +59,9 @@ function Table(props){
     return (
         <table>
             <thead><tr>
-                {fields.map((val, idx)=>(<th key={idx} style={{width: `${colWidths[idx]}ch`}}>{val.name}</th>))}
+                {fields.map((val, idx)=>
+                    <th key={idx} style={{"minWidth": `${colWidths[idx]}ch`}}>{val.name}{}</th>
+                )}
             </tr></thead>
             <tbody onMouseLeave={()=>props.setHover(-1)}>
                 {props.res.rows.map((row, idx)=>

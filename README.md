@@ -14,3 +14,6 @@ after that run `npx parcel src/index.html` in pizza-app/ to run development serv
 
 Known issues
  - Negative signs (hyphens) break credit card input
+
+
+ ![Dataflow/system diagram](./dataflow.png)
