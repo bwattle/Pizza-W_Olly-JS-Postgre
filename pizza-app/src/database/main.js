@@ -1,4 +1,3 @@
-import { getKeyByValue } from "../common/utils";
 import React from "react";
 import ReactDOM from "react-dom"
 import { database } from "../common/database";
@@ -7,24 +6,48 @@ import "../common/topbar.css"
 import "../common/common.css"
 import "./style.css"
 
+// takes a string and text to search for
+// returns the string with any instances of text surrounded by <mark>
+function TableItem(props){
+    if(props.text.length >= 1){
+        // uses dangerouslySetInnerHTML beacuse otherwise strings are not treated as html
+        // this could cause xss
+        return (<td
+            dangerouslySetInnerHTML={{__html: props.string.toLowerCase().replace(props.text, `<mark>${props.text}</mark>`)}}
+        ></td>)
+    }else{
+        return <td>{props.string}</td>
+    }
+}
 
+// takes a row and text to search for
+// return null if no matches and the row with text highlighted if there are matches 
+function TableRow(props){
+    // check if there are no matches first
+    if(Object.values(props.row).some(x=>x.toString().toLowerCase().includes(props.filter))){
+        return (
+            <tr onMouseEnter={()=>props.setHover(props.row[props.hover_name])}
+                className={(props.row[props.hover_name] == props.hover_id)?"row-hovered":""}
+                key={props.row.id}
+            >
+                {Object.keys(props.row).map(
+                    (field, idx)=><TableItem string={props.row[field].toString()} text={props.filter} key={idx} />
+                )}
+            </tr>
+        )
+    }else{
+        return null
+    }
+}
+
+// polymorphic component to display both tables
 function Table(props){
     if(!props.res.fields){
         return <div>Loading...</div>
     }
 
-    function checkRow(row, text){
-        return Object.values(row).some(x=>x.toString().toLowerCase().includes(text))
-    }
-
-    let rows;
-    if(props.filter.length > 1){
-        rows = props.res.rows.filter(row=>checkRow(row, props.filter))
-    }else{
-        rows = props.res.rows
-    }
-
     const fields = props.res.fields
+    // find the maxium width of each field to set table widths
     const colWidths = fields.map(field=>field.name.length) // create array 0's with length of fields
     for(const row of props.res.rows){
         for(let i=0; i<fields.length; i++){
@@ -39,14 +62,8 @@ function Table(props){
                 {fields.map((val, idx)=>(<th key={idx} style={{width: `${colWidths[idx]}ch`}}>{val.name}</th>))}
             </tr></thead>
             <tbody onMouseLeave={()=>props.setHover(-1)}>
-                {rows.map((row, idx)=>
-                    <tr 
-                        onMouseEnter={()=>props.setHover(row[props.hover_name])}
-                        className={(row[props.hover_name] == props.hover_id)?"row-hovered":""}
-                        key={row.id}
-                    >
-                        {fields.map((field, idx)=><td key={idx}>{row[field.name].toString()}</td>)}
-                    </tr>
+                {props.res.rows.map((row, idx)=>
+                    <TableRow key={row.id} row={row} {...props} />
                 )}
             </tbody>
         </table>
@@ -60,7 +77,7 @@ function App(){
     const [ filter, setFilter ] = React.useState("")
 
     const handleFilterChange = event=>{
-        setFilter(event.target.value)
+        setFilter(event.target.value.toLowerCase())
     }
 
     React.useEffect(()=>{

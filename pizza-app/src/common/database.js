@@ -1,6 +1,8 @@
 import { sum, httpGetAsync } from "./utils"
 
 let database_url;
+// automatically detect when running locally and
+// set database url to local backend
 if(window.location.hostname == "localhost"){
     database_url = "http://localhost:3000"
 }else{
