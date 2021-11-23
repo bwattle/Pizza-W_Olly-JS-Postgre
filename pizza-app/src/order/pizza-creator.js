@@ -6,7 +6,8 @@ import { arraysEqual } from "../common/utils"
 
 import "./pizza-creator.css";
 
-
+// you can add presets by just adding to this
+// ingredients must be the ones defined in common/database.js
 const presets = {
     "None": [],
     "Cheese": ["cheese"],
@@ -15,11 +16,14 @@ const presets = {
     "Vegetarian": ["cheese", "tomato", "mushroom", "spinach", "onion", "olive"]
 }
 
+// provides a dropdown that displays options from presets ^
+// takes ings and setIngs
 function PresetSelect(props) {
     const handleChange = (event) => {
         props.setIngs(presets[event.target.value]);
     }
 
+    // detects presets if you have selected ingredients with buttons
     let selectedPreset = "None"
     for(const preset of Object.keys(presets)){
         if(arraysEqual(presets[preset].sort(), props.ings.sort())){
@@ -42,7 +46,9 @@ function PresetSelect(props) {
     );
 }
 
-
+// single ingredient button
+// takes the ingredient internal name and uses allIngredients (from common/database.js)
+// to find the price and display name
 const Ingredient = (props)=>{
     return (
         <label >
@@ -60,23 +66,27 @@ const Ingredient = (props)=>{
 
 
 const PizzaCreator = (props) => {
-    const allNumbers = [...Array(10).keys()] // generate array of all numbers 1-10
+    // generate array of numbers 1-10 for quantity options
+    const allNumbers = [...Array(10).keys()] 
+    // creates option elements for each number
     const numberOptions = allNumbers.map(idx=>{const val = idx+1; return <option key={val}>{val}</option>})
 
+    // replaces pizza with new one with new quantity or ingredients 
     const handleAmountChange = (event)=>{
         const quant = event.target.value
         props.setPizza(new Pizza(props.pizza.ingredients, quant))
     }
-
     const setIngredients = (ingredients) => {
         props.setPizza(new Pizza(ingredients, props.pizza.quantity))
     }
 
     // on click handlers
+    // takes name of ingredients, ing
+    // and value to set it to, val
     const handleIngChange = (ing, val)=>{
         let newIngs;
         if(!val){
-            // concat new ing to end
+            // concat new ing to end of selected ingredients array
             newIngs = props.pizza.ingredients.concat([ing])
         }else{
             // filter to remove ingredient
@@ -85,9 +95,10 @@ const PizzaCreator = (props) => {
         setIngredients(newIngs)
     }
 
+    // creates Ingredient element for each item in allIngredients
     let ingredientElements = []
     for(const ing of Object.keys(allIngredients)){
-        const selected = props.pizza.ingredients.includes(ing)
+        const selected = props.pizza.ingredients.includes(ing) // wether this ingredient is selected
         ingredientElements.push(<Ingredient onClick={handleIngChange} key={ing} ing={ing} selected={selected} />)
     }
 
@@ -114,9 +125,7 @@ const PizzaCreator = (props) => {
                     </select>
                 </label>
                 <br />
-                Pizza cost ${
-                    props.pizza.getPrice()
-                }
+                Pizza cost ${props.pizza.getPrice()}
             </div>
         </div>
     )

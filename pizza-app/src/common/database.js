@@ -8,13 +8,16 @@ if(window.location.hostname == "localhost"){
 }
 console.log("api", database_url)
 
-// uses localstorage to store records
-// TODO: change to use remote sql database
+// a class that the frontend uses to interface with the backend
+// makes requests to the backend serve which then connects to the database
 class Database{
     constructor(){
         this.orders = [];
         this.pizzas = [];
     }
+    // all methods that interface with the database have a callback parameter
+    // the callback function is called with the response data when it is ready
+    // this is done beacuse it is asyncrons so cant use return without holding up everything else
     addOrder(record, callback){
         if( !(record instanceof OrderRecord)){
             console.log(record);
@@ -65,13 +68,16 @@ class Database{
             try{callback(JSON.parse(res))}
             catch(e){callback(res)}})
     }
+    // gets the next id to use
     getId(callback){
         httpGetAsync(`${database_url}/get-id`, res=>callback(parseInt(res)))
     }
 }
 
+
+// call to represent an entire order
+// dosent store pizzas, they are stored seperatly and referance their order with its id
 class OrderRecord {
-    // set id as undefined for temp records
     constructor(id, readyBy, delivery, address, postcode, cash, name, credit_card, ccv){
         this.id = id
         this.ready_by = readyBy; // as js date object
@@ -84,7 +90,7 @@ class OrderRecord {
         this.ccv = ccv;
     }
 
-    // make sure all the data is in the correct format
+    // make sure all the data is in the correct format and valid
     validate(){
         return (
             this.ready_by instanceof Date &&
@@ -104,11 +110,11 @@ class OrderRecord {
 // represents a pizza in a order
 class Pizza {
     constructor(ingredients, quantity, id, orderId){
-        this.ingredients = ingredients
+        this.ingredients = ingredients // ingredients selected for this pizza
         this.quantity = quantity
         this.id = id
         this.orderId = orderId
-        this.localId = Math.floor(Math.random()*Number.MAX_SAFE_INTEGER);
+        this.localId = Math.floor(Math.random()*Number.MAX_SAFE_INTEGER); // used to indentify each pizza in the ui
     }
     validate(){
         return (
@@ -132,7 +138,8 @@ Pizza.newEmptyPizza = ()=>new Pizza([], 1)
 
 
 const basePizzaPrice = 6;
-// provides a mapping between interal names and display names
+// provides a mapping between interal names and display names/prices
+// you can add ingredients by adding to this
 const allIngredients = {
     cheese:      { name: "Cheese", price: 1 },
     beef:        { name: "Ground beef", price: 2 },

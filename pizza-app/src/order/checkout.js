@@ -8,6 +8,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./checkout.css"
 import "../common/common.css"
 
+// validate name input
+// is a controlled component https://reactjs.org/docs/forms.html#controlled-components
+// takes a name and a setName as props
 function Name(props){
     return (<Validate valid={props.name.length>=1}>
         <label htmlFor="fname">First name:</label>
@@ -16,28 +19,33 @@ function Name(props){
 }
 
 
+// controlled component to display payment info inputs
 function Payment(props){
-    let content;
+    // if paying with cash dont display credit card inputs
+    let ccInputs;
     if(props.cash){
-        content = null
+        ccInputs = null
     }else{
-        content = (
-        <div>
-            <Validate valid={props.ccNum.length >= 14}>
-                <label>
-                    Credit card number:
-                    <input type="number" value={props.ccNum} onChange={props.setCcNum}></input>
-                </label>
-            </Validate>
-            <br />
-            <Validate valid={props.ccv.length == 3}>
-                <label>
-                    CVV:
-                    <input type="number" value={props.ccv} onChange={props.setCcv}></input>
-                </label>
-            </Validate>
-        </div>)
+        ccInputs = (
+            <div>
+                <Validate valid={props.ccNum.length >= 14}>
+                    <label>
+                        Credit card number:
+                        <input type="number" value={props.ccNum} onChange={props.setCcNum}></input>
+                    </label>
+                </Validate>
+                <br />
+                <Validate valid={props.ccv.length == 3}>
+                    <label>
+                        CVV:
+                        <input type="number" value={props.ccv} onChange={props.setCcv}></input>
+                    </label>
+                </Validate>
+            </div>
+        )
     }
+
+
     return (
         <div>
             <h4>Payment</h4>
@@ -45,17 +53,22 @@ function Payment(props){
                 Paying cash?
                 <input type="checkbox" id="cash-checkbox" value={props.cash} onChange={props.setCash}></input>
             </label>
-            {content}
+
+            {ccInputs}
         </div>
     )
 }
 
-
+// inputs to either pick where to deliver to or to do pickup
 function Delivery(props){
-    const filterPassedTime = (time) => {
+
+    // returns wether a date is valid
+    // takes time to test
+    const getTimeValid = (time) => {
         const currentDate = new Date();
         const selectedDate = new Date(time);
 
+        // getTime gets milliseconds since epoch
         return currentDate.getTime() < selectedDate.getTime();
     };
 
@@ -81,15 +94,15 @@ function Delivery(props){
             <input type="checkbox" id="delivery-checkbox" checked={props.delivery} onChange={props.setDelivery}></input>
         </label>
         <br />
-        <Validate valid={props.ready.toISOString()>getDate().toISOString()} text="Date too early">
+        <Validate valid={getTimeValid(props.ready)} text="Date too early">
             <label>
                 {props.delivery?"Arrive at ":"Pickup ready at "}
-                {/* <input type="datetime-local" min={dateToString(minDate)} value={dateToString(props.ready)} onChange={props.setReadyBy}></input> */}
+                {/* this is the datepicker component defined in a library */}
                 <DatePicker
                     selected={props.ready}
                     onChange={props.setReadyBy}
                     showTimeSelect
-                    filterTime={filterPassedTime}
+                    filterTime={getTimeValid}
                     minDate={new Date()}
                     timeIntervals={5}
                     dateFormat="MMMM d, yyyy h:mm aa"
@@ -97,40 +110,46 @@ function Delivery(props){
             </label>
         </Validate>
         <br />
+        {/* uses a ternary statement (which is basically shorthand for if)
+        to not show address inputs if you're doing pickup */}
         {props.delivery?addressPicker:null}
     </div>
 }
 
 
 
-// filters out numbers
+// takes string and filters out numbers
 function filterNumbers(v){
     // uses a regex from here to filter only letters and spaces (\s)
     // https://stackoverflow.com/questions/58259610/how-do-i-filter-out-a-string-to-contain-only-letters-in-vanilla-javascript
     return v.replace(/[^a-z\s'.]+/gi, '')
 }
 
-// filters out letters
+// takes string and filters out letters
 function filterLetters(v){
     return v.replaceAll(/\D+/g, "") // matches all non numbers
 }
 
-function getDate(plusMins=5){
+// gets what the datetime will be in plusMins time
+function getDatePlus(plusMins){
     return new Date(new Date().getTime() + 1000*60*plusMins)
 }
 
 
+// Component to encapsulate checkout form (name, payment, delivery)
+// takes the list of pizzas in the current order
 export class Checkout extends React.Component{
     
     constructor(props){
         super(props);
-        this.state = {...new OrderRecord(-1, getDate(20), true, "", "", false, "", "", ""), feedback: []}
+        this.state = {...new OrderRecord(-1, getDatePlus(20), true, "", "", false, "", "", ""), feedback: []}
     }
 
     render(){
 
         ///////// ONCHANGE HANDLERS //////////
         // mostly just sets state to the value
+        // these are passed to the components so that they can call these and set state
         const handleCashChange = e=>this.setState({cash: e.target.checked})
         const handleAddrChange = e=>this.setState({address: e.target.value})
         const handleDeliveryChange = e=>this.setState({delivery: e.target.checked})
@@ -140,26 +159,32 @@ export class Checkout extends React.Component{
         const handlePostChange = e=>this.setState({postcode: filterLetters(e.target.value).substring(0, 4)})
         const handleCcvChange = e=>this.setState({ccv: filterLetters(e.target.value).substring(0, 3)})
         const handleCcNumChange = e=>this.setState({credit_card: filterLetters(e.target.value).substring(0, 16)}) 
-        const handleReadyByChange = date=>{
-            console.log(date, date.toISOString());this.setState({ready_by: date})
-        }
+        const handleReadyByChange = date=>this.setState({ready_by: date})
+        
 
         //////////// CALCULATE TOTAL /////////////
         const prices = this.props.pizzas.map(
+            // each pizza has a method to calculate its individual price
             pizza=>pizza.getPrice()
         )
         const total = sum(prices)
 
         //////////// HANDLE SUBMIT /////////////
         const handleCreateOrder = ()=>{
+            // get the next avalible id from database
+            // passes createOrder as a callback that will be called after getting the id
             database.getId(createOrder)
+            // adds loading to the feedback that will show up below the submit button
             this.setState({feedback: [...this.state.feedback, {text:"Loading...", status:true}]})
         }
+
         // callback after getting id
         const createOrder = order_id=>{
+            // this.state has all the properties of OrderRecord but is not actually an instance of it
+            // need to create a new orderRecord so you can call methods
             const order = Object.assign(new OrderRecord, this.state)
             order.id = order_id
-            console.log("got id ", order_id);
+            // sends order to database, has a callback which will set feedback
             database.addOrder(
                 order,
                 res=>{
@@ -171,6 +196,7 @@ export class Checkout extends React.Component{
                     }
                 }
             )
+            // goes through sending each pizza
             for(const pizza of this.props.pizzas){
                 database.addPizza(pizza, order_id, res=>{
                     console.log("added pizza, res:",res);
@@ -183,7 +209,7 @@ export class Checkout extends React.Component{
             }
         }
 
-        // checks if all inputs are valid
+        // checks if all inputs are valid and we can create an order
         const validateInput = ()=>{
             return (
                 Object.assign(new OrderRecord(), this.state).validate() &&
@@ -191,6 +217,7 @@ export class Checkout extends React.Component{
                 this.state.feedback.length == 0
             )
         }
+
         return (
             <div id="price-outer">
                 Total: ${total}

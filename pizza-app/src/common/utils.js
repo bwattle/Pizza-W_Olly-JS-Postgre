@@ -1,7 +1,10 @@
+// utility functions
+
 export function sum(arr){
     return arr.reduce((a, b)=>a+b, 0)
 }
 
+// https://stackoverflow.com/a/16436975
 export function arraysEqual(a, b) {
     if (a === b) return true;
     if (a == null || b == null) return false;
