@@ -30,11 +30,7 @@ function makeQuery(query, callback){
     })
 }
 
-app.get('/', (req, res) => {
-    console.log("params ", req.params)
-    res.send('Hello World!')
-})
-
+// for debugging
 app.get("/list-tables", (req, res)=>{
     console.log("list tables");
     // https://www.postgresqltutorial.com/postgresql-show-tables/
@@ -148,12 +144,15 @@ app.get("/create-pizza", (req, res)=>{
     }
 })
 
+// to allow manual queries for administrative purposes
+// return file that provides a interface to send queries
 app.get("/query", (req, res)=>{
     res.sendFile('query.html', {root: __dirname })
 })
 app.get("/_query", (req, res)=>{
     try{
         console.log(req.query.q, req.query.p);
+        // password should be stored in an env variable in a real system
         if(req.query.q && req.query.p == "1234"){
             makeQuery(req.query.q, x=>res.send(x))
         }
@@ -161,24 +160,43 @@ app.get("/_query", (req, res)=>{
         res.send(err)
     }
 })
+/*
+to clear all tables:
+delete tables
+DROP TABLE "OrderItems";
+DROP TABLE "Orders";
+re-create them with what is in schema.sql
+*/
 
+
+/*
+clients get an id to use before they create an order
+if one client gets an id and in the time before it creates an order with that id another client gets an id
+they will both get the same id and the order will get overwritten
+to fix this we keep track of which ids we have send recently and dont send the same two
+*/
+let leasedIds = []
 app.get("/get-id", (req, res)=>{
     makeQuery(`SELECT MAX(id) AS FirstId
     FROM "Orders";`, (sqlRes)=>{
-        let giveId = parseInt(sqlRes.rows[0].firstid)+1
-        if(giveId.toString() == "NaN"){
-            giveId = 0
+        // gets the highest id the server has +1
+        let responseId = parseInt(sqlRes.rows[0].firstid)+1
+        if(responseId.toString() == "NaN"){ // a MAX() query returns NaN if there are no records
+            responseId = 0
         }
-        console.log(new Date().toISOString()+" : gave out id "+giveId);
-        res.send(giveId.toString())
+
+        // incriment is untill we get a free one
+        while(leasedIds.includes(responseId)){
+            responseId++;
+        }
+        // add to leasedIds
+        leasedIds.push(responseId)
+        // sets timeout to remove id from leased list after 10 seconds
+        setTimeout(()=>{console.log(`removed id: ${responseId}`);leasedIds=leasedIds.filter(x=>x!=responseId)}, 10000)
+        console.log(`[${new Date().toISOString()}] gave out id ${responseId}\tleasedId's:${leasedIds}`);
+        res.send(responseId.toString())
     });
 })
-
-/*
-clean:
-DROP TABLE "OrderItems";
-DROP TABLE "Orders";
-*/
 
 
 app.listen(port, () => {
